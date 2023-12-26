@@ -5,6 +5,7 @@ import com.sparta.trellor.domain.user.dto.request.LoginRequestDto;
 import com.sparta.trellor.domain.user.entity.UserRoleEnum;
 import com.sparta.trellor.global.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -66,5 +67,21 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String token = jwtUtil.createToken(username, role);
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
+    }
+
+    /**
+     * 인증 실패시 실행되는 메서드
+     */
+    @Override
+    protected void unsuccessfulAuthentication(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException failed
+    ) throws IOException, ServletException {
+        log.info("로그인 실패");
+
+        response.setStatus(401);
+        response.setContentType("application/json;charset=uft-8");
+        response.getWriter().write("닉네임 또는 비밀번호를 확인해주세요");
     }
 }
