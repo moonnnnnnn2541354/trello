@@ -26,8 +26,6 @@ public class UserService {
         String email = requestDto.getEmail();
         String password = passwordEncoder.encode(requestDto.getPassword());
 
-        System.out.println(username + " " + email + " " + password);
-
         Optional<User> user = userRepository.findByUsernameAndEmail(username, email);
 
         if(user.isEmpty()) {
