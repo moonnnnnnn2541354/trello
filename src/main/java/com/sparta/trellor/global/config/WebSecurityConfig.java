@@ -1,5 +1,7 @@
 package com.sparta.trellor.global.config;
 
+import com.sparta.trellor.global.jwt.JwtUtil;
+import com.sparta.trellor.global.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+    private final JwtUtil jwtUtil;
     private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
@@ -28,5 +31,15 @@ public class WebSecurityConfig {
             AuthenticationConfiguration configuration
     ) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    /**
+     * 인증 필터 등록
+     */
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
+        filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
+        return filter;
     }
 }
