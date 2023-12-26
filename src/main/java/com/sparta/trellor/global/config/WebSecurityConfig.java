@@ -2,6 +2,8 @@ package com.sparta.trellor.global.config;
 
 import com.sparta.trellor.global.jwt.JwtUtil;
 import com.sparta.trellor.global.security.JwtAuthenticationFilter;
+import com.sparta.trellor.global.security.JwtAuthorizationFilter;
+import com.sparta.trellor.global.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
+    private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
@@ -41,5 +44,13 @@ public class WebSecurityConfig {
         JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
+    }
+
+    /**
+     * 인가 필터 등록
+     */
+    @Bean
+    public JwtAuthorizationFilter jwtAuthorizationFilter() {
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
     }
 }
