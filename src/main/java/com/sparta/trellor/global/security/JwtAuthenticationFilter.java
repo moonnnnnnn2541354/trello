@@ -2,7 +2,9 @@ package com.sparta.trellor.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.trellor.domain.user.dto.request.LoginRequestDto;
+import com.sparta.trellor.domain.user.entity.UserRoleEnum;
 import com.sparta.trellor.global.jwt.JwtUtil;
+import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -45,5 +47,24 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             log.error("로그인 실패 : " + e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    /**
+     * 인증 성공시 실행되는 메서드
+     */
+    @Override
+    protected void successfulAuthentication(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain,
+            Authentication authResult
+    ) {
+        log.info("로그인 성공");
+
+        String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
+        UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
+
+        String token = jwtUtil.createToken(username, role);
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
     }
 }
