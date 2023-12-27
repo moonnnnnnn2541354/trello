@@ -41,7 +41,7 @@ public class UserService {
     /**
      * 회원 탈퇴 관련 메서드
      */
-    public void deleteAccount(Long userId, User user) {
+    public Long deleteAccount(Long userId, User user) {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
@@ -49,5 +49,6 @@ public class UserService {
             throw new IllegalArgumentException("자기자신의 계정만 삭제 가능합니다.");
         }
         userRepository.delete(user);
+        return user.getId();
     }
 }
