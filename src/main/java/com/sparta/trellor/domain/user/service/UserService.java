@@ -21,6 +21,9 @@ public class UserService {
    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
+    /**
+     * 회원가입 관련 메서드
+     */
     public void signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
         String email = requestDto.getEmail();
@@ -33,5 +36,18 @@ public class UserService {
         } else {
             throw new IllegalArgumentException("이미 존재하는 사용자입니다.");
         }
+    }
+
+    /**
+     * 회원 탈퇴 관련 메서드
+     */
+    public void deleteAccount(Long userId, User user) {
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        if(!findUser.getUsername().equals(user.getUsername())) {
+            throw new IllegalArgumentException("자기자신의 계정만 삭제 가능합니다.");
+        }
+        userRepository.delete(user);
     }
 }

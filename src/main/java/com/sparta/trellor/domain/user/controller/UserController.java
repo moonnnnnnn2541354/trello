@@ -2,11 +2,11 @@ package com.sparta.trellor.domain.user.controller;
 
 import com.sparta.trellor.domain.user.dto.request.SignupRequestDto;
 import com.sparta.trellor.domain.user.service.UserService;
+import com.sparta.trellor.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,5 +17,13 @@ public class UserController {
     @PostMapping("/signup")
     public void signup(@RequestBody SignupRequestDto requestDto) {
         userService.signup(requestDto);
+    }
+
+    @DeleteMapping("/{userId}")
+    public void deleteAccount(
+            @PathVariable Long userId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        userService.deleteAccount(userId, userDetails.getUser());
     }
 }
