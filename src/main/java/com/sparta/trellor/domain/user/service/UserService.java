@@ -6,8 +6,6 @@ import com.sparta.trellor.domain.user.dto.request.SignupRequestDto;
 import com.sparta.trellor.domain.user.entity.User;
 import com.sparta.trellor.domain.user.entity.UserRoleEnum;
 import com.sparta.trellor.domain.user.repository.UserRepository;
-import com.sparta.trellor.global.jwt.JwtUtil;
-import com.sparta.trellor.global.security.UserDetailsImpl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +31,6 @@ public class UserService {
         String username = requestDto.getUsername();
         String email = requestDto.getEmail();
         String password = passwordEncoder.encode(requestDto.getPassword());
-
         Optional<User> user = userRepository.findByUsernameAndEmail(username, email);
 
         if(user.isEmpty()) {
@@ -49,7 +46,6 @@ public class UserService {
     public Long deleteAccount(Long userId, User user) {
         User findUser = checkToExistUser(userId);
         checkAccessAuthority(findUser, user);
-
         userRepository.delete(user);
         return user.getId();
     }
@@ -61,12 +57,8 @@ public class UserService {
     public void updatePassword(Long userId, PasswordUpdateRequestDto requestDto, User user) {
         User findUser = checkToExistUser(userId);
         checkAccessAuthority(findUser, user);
-
-        if(passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword())) {
-            findUser.passwordUpdate(passwordEncoder.encode(requestDto.getPassword()));
-        } else {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
+        checkPasswordMatch(requestDto.getCurrentPassword(), user.getPassword());
+        findUser.passwordUpdate(passwordEncoder.encode(requestDto.getPassword()));
     }
 
     /**
@@ -76,12 +68,8 @@ public class UserService {
     public void updateEmail(Long userId, EmailUpdateRequestDto requestDto, User user) {
         User findUser = checkToExistUser(userId);
         checkAccessAuthority(findUser, user);
-
-        if(passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
-            findUser.emailUpdate(requestDto.getEmail());
-        } else {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
+        checkPasswordMatch(requestDto.getPassword(), user.getPassword());
+        findUser.emailUpdate(requestDto.getEmail());
     }
 
     /**
@@ -98,6 +86,15 @@ public class UserService {
     private void checkAccessAuthority(User findUser, User user) {
         if(!findUser.getUsername().equals(user.getUsername())) {
             throw new IllegalArgumentException("해당 계정에 대한 권한을 가지고 있지 않습니다.");
+        }
+    }
+
+    /**
+     * 비밀번호 일치 여부 확인하는 메서드
+     */
+    private void checkPasswordMatch(String rawPassword, String encodedPassword) {
+        if(!passwordEncoder.matches(rawPassword, encodedPassword)) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
     }
 }
