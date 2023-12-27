@@ -38,6 +38,6 @@ public class UserController {
             @RequestBody PasswordUpdateRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-
+        userService.updatePassword(userId, requestDto, userDetails.getUser());
     }
 }

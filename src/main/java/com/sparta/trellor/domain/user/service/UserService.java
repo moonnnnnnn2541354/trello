@@ -1,9 +1,12 @@
 package com.sparta.trellor.domain.user.service;
 
+import com.sparta.trellor.domain.user.dto.request.PasswordUpdateRequestDto;
 import com.sparta.trellor.domain.user.dto.request.SignupRequestDto;
 import com.sparta.trellor.domain.user.entity.User;
 import com.sparta.trellor.domain.user.entity.UserRoleEnum;
 import com.sparta.trellor.domain.user.repository.UserRepository;
+import com.sparta.trellor.global.jwt.JwtUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +21,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class UserService {
-   private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
     /**
@@ -42,13 +45,42 @@ public class UserService {
      * 회원 탈퇴 관련 메서드
      */
     public Long deleteAccount(Long userId, User user) {
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        User findUser = checkToExistUser(userId);
+        checkAccessAuthority(findUser, user);
 
-        if(!findUser.getUsername().equals(user.getUsername())) {
-            throw new IllegalArgumentException("자기자신의 계정만 삭제 가능합니다.");
-        }
         userRepository.delete(user);
         return user.getId();
+    }
+
+    /**
+     * 비밀번호 변경 관련 메서드
+     */
+    @Transactional
+    public void updatePassword(Long userId, PasswordUpdateRequestDto requestDto, User user) {
+        User findUser = checkToExistUser(userId);
+        checkAccessAuthority(findUser, user);
+
+        if(passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword())) {
+            findUser.update(passwordEncoder.encode(requestDto.getPassword()));
+        } else {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+    /**
+     * 존재하는 사용자인지 확인하는 메서드
+     */
+    private User checkToExistUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+    }
+
+    /**
+     * 접근 권한을 가지고 있는진 확인하는 메서드
+     */
+    private void checkAccessAuthority(User findUser, User user) {
+        if(!findUser.getUsername().equals(user.getUsername())) {
+            throw new IllegalArgumentException("해당 계정에 대한 권한을 가지고 있지 않습니다.");
+        }
     }
 }

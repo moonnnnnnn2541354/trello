@@ -2,7 +2,9 @@ package com.sparta.trellor.domain.user.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.Getter;
 
+@Getter
 public class PasswordUpdateRequestDto {
     private String currentPassword; // 현재 비밀번호
 
