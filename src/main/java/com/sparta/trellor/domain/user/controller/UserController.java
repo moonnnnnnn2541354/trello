@@ -1,5 +1,6 @@
 package com.sparta.trellor.domain.user.controller;
 
+import com.sparta.trellor.domain.user.dto.request.EmailUpdateRequestDto;
 import com.sparta.trellor.domain.user.dto.request.PasswordUpdateRequestDto;
 import com.sparta.trellor.domain.user.dto.request.SignupRequestDto;
 import com.sparta.trellor.domain.user.service.UserService;
@@ -39,5 +40,14 @@ public class UserController {
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         userService.updatePassword(userId, requestDto, userDetails.getUser());
+    }
+
+    @PutMapping("/{userId}/email")
+    public void updateEmail(
+            @PathVariable Long userId,
+            @RequestBody EmailUpdateRequestDto requestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
     }
 }
