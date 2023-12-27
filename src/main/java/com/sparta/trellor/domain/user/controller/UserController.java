@@ -5,6 +5,7 @@ import com.sparta.trellor.domain.user.dto.request.PasswordUpdateRequestDto;
 import com.sparta.trellor.domain.user.dto.request.SignupRequestDto;
 import com.sparta.trellor.domain.user.service.UserService;
 import com.sparta.trellor.global.security.UserDetailsImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,7 +18,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public void signup(@RequestBody SignupRequestDto requestDto) {
+    public void signup(@Valid @RequestBody SignupRequestDto requestDto) {
         userService.signup(requestDto);
     }
 
@@ -36,7 +37,7 @@ public class UserController {
     @PutMapping("/{userId}/password")
     public void updatePassword(
             @PathVariable Long userId,
-            @RequestBody PasswordUpdateRequestDto requestDto,
+            @Valid @RequestBody PasswordUpdateRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         userService.updatePassword(userId, requestDto, userDetails.getUser());
@@ -45,9 +46,9 @@ public class UserController {
     @PutMapping("/{userId}/email")
     public void updateEmail(
             @PathVariable Long userId,
-            @RequestBody EmailUpdateRequestDto requestDto,
+            @Valid @RequestBody EmailUpdateRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-
+        userService.updateEmail(userId, requestDto, userDetails.getUser());
     }
 }

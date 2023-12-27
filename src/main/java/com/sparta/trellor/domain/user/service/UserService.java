@@ -1,11 +1,13 @@
 package com.sparta.trellor.domain.user.service;
 
+import com.sparta.trellor.domain.user.dto.request.EmailUpdateRequestDto;
 import com.sparta.trellor.domain.user.dto.request.PasswordUpdateRequestDto;
 import com.sparta.trellor.domain.user.dto.request.SignupRequestDto;
 import com.sparta.trellor.domain.user.entity.User;
 import com.sparta.trellor.domain.user.entity.UserRoleEnum;
 import com.sparta.trellor.domain.user.repository.UserRepository;
 import com.sparta.trellor.global.jwt.JwtUtil;
+import com.sparta.trellor.global.security.UserDetailsImpl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +63,22 @@ public class UserService {
         checkAccessAuthority(findUser, user);
 
         if(passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword())) {
-            findUser.update(passwordEncoder.encode(requestDto.getPassword()));
+            findUser.passwordUpdate(passwordEncoder.encode(requestDto.getPassword()));
+        } else {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+    /**
+     * 이메일 변경 관련 메서드
+     */
+    @Transactional
+    public void updateEmail(Long userId, EmailUpdateRequestDto requestDto, User user) {
+        User findUser = checkToExistUser(userId);
+        checkAccessAuthority(findUser, user);
+
+        if(passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+            findUser.emailUpdate(requestDto.getEmail());
         } else {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }

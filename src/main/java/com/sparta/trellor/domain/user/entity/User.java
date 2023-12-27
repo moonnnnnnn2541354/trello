@@ -33,8 +33,12 @@ public class User {
         this.password = password;
         this.role = role;
     }
-    public void update(String encodingNewPassword) {
+    public void passwordUpdate(String encodingNewPassword) {
         this.password = encodingNewPassword;
+    }
+
+    public void emailUpdate(String email) {
+        this.email = email;
     }
 }
 
