@@ -1,5 +1,6 @@
 package com.sparta.trellor.domain.user.controller;
 
+import com.sparta.trellor.domain.user.dto.request.PasswordUpdateRequestDto;
 import com.sparta.trellor.domain.user.dto.request.SignupRequestDto;
 import com.sparta.trellor.domain.user.service.UserService;
 import com.sparta.trellor.global.security.UserDetailsImpl;
@@ -29,5 +30,14 @@ public class UserController {
             return ResponseEntity.status(200).body("회원탈퇴가 완료되었습니다.");
         }
         return ResponseEntity.status(301).body("회원탈퇴를 실패하였습니다.");
+    }
+
+    @PutMapping("/{userId}/password")
+    public void updatePassword(
+            @PathVariable Long userId,
+            @RequestBody PasswordUpdateRequestDto requestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
     }
 }
