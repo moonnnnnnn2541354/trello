@@ -76,4 +76,10 @@ public class CardService {
         return card;
     }
 
+    @Transactional
+    public void deleteCard(Long cardId, UserDetailsImpl userDetails) {
+        Card card = getUserCard(cardId, userDetails.getUser());
+
+        cardRepository.delete(card);
+    }
 }
