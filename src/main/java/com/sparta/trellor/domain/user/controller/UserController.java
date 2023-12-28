@@ -11,7 +11,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+
+import javax.naming.Binding;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +26,19 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto requestDto) {
+    public ResponseEntity<?> signup(
+            @Valid @RequestBody SignupRequestDto requestDto,
+            BindingResult bindingResult
+    ) {
+        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+        List<String> errorMessages = new ArrayList<>();
+        if(fieldErrors.size() > 0) {
+            for(FieldError fieldError : fieldErrors) {
+                errorMessages.add(fieldError.getDefaultMessage());
+            }
+            return ResponseEntity.status(403).body(errorMessages);
+        }
+
         if(userService.signup(requestDto))
             return ResponseEntity.status(201).body("회원가입 성공했습니다.");
         else

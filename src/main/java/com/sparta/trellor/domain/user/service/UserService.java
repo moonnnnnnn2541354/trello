@@ -41,7 +41,7 @@ public class UserService {
             userRepository.save(new User(username, email, password, UserRoleEnum.USER));
             return true;
         } else {
-            throw new IllegalArgumentException("이미 존재하는 사용자입니다.");
+            return false;
         }
     }
 
