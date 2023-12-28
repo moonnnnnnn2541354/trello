@@ -1,5 +1,7 @@
 package com.sparta.trellor.domain.column.service;
 
+import com.sparta.trellor.domain.board.entity.Board;
+import com.sparta.trellor.domain.board.repository.BoardRepository;
 import com.sparta.trellor.domain.column.dto.BoardColumnMoveRequestDto;
 import com.sparta.trellor.domain.column.dto.BoardColumnMoveResponseDto;
 import com.sparta.trellor.domain.column.dto.BoardColumnRequestDto;

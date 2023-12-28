@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class SignupRequestDto {
     @NotBlank
+
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[0-9])[a-z0-9]{2,10}$",
             message = "사용자이름은 a-z, 0-9 만 포함하고 2-10자이어야 합니다.")
     private String username;
