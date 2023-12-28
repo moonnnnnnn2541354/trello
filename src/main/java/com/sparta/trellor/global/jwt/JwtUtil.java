@@ -88,7 +88,7 @@ public class JwtUtil {
      * Jwt 토큰에서 토큰 식별자를 자르는 메서드
      */
     public String substringToken(String tokenValue) {
-        if(StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
+        if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
         }
         log.error("Not Found Token");
@@ -102,13 +102,13 @@ public class JwtUtil {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch(SecurityException | MalformedJwtException | SignatureException e) {
+        } catch (SecurityException | MalformedJwtException | SignatureException e) {
             log.error("Invalid JWT signature, 유효하지 않는 JWT 서명입니다.");
-        } catch(ExpiredJwtException e) {
+        } catch (ExpiredJwtException e) {
             log.error("Expired JWT token, 만료된 JWT token입니다.");
-        } catch(UnsupportedJwtException e) {
+        } catch (UnsupportedJwtException e) {
             log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰입니다.");
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             log.error("JWT claims is empty, 잘못된 JWT 토큰입니다.");
         }
         return false;

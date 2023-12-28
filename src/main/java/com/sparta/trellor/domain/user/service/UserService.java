@@ -7,7 +7,6 @@ import com.sparta.trellor.domain.user.entity.User;
 import com.sparta.trellor.domain.user.entity.UserRoleEnum;
 import com.sparta.trellor.domain.user.repository.UserRepository;
 import com.sparta.trellor.global.jwt.JwtUtil;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -38,7 +37,7 @@ public class UserService {
         String password = passwordEncoder.encode(requestDto.getPassword());
         Optional<User> user = userRepository.findByUsernameAndEmail(username, email);
 
-        if(user.isEmpty()) {
+        if (user.isEmpty()) {
             userRepository.save(new User(username, email, password, UserRoleEnum.USER));
         } else {
             throw new IllegalArgumentException("이미 존재하는 사용자입니다.");
@@ -89,7 +88,7 @@ public class UserService {
      * 접근 권한을 가지고 있는진 확인하는 메서드
      */
     private void checkAccessAuthority(User findUser, User user) {
-        if(!findUser.getUsername().equals(user.getUsername())) {
+        if (!findUser.getUsername().equals(user.getUsername())) {
             throw new IllegalArgumentException("해당 계정에 대한 권한을 가지고 있지 않습니다.");
         }
     }
@@ -98,7 +97,7 @@ public class UserService {
      * 비밀번호 일치 여부 확인하는 메서드
      */
     private void checkPasswordMatch(String rawPassword, String encodedPassword) {
-        if(!passwordEncoder.matches(rawPassword, encodedPassword)) {
+        if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
     }
