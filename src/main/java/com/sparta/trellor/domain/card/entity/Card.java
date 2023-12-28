@@ -35,4 +35,16 @@ public class Card extends BaseTime {
         this.cardColor = cardRequestDto.getCardColor();
         this.user = userDetails.getUser();
     }
+
+    public void setCardTitle(String cardTitle) {
+        this.cardTitle = cardTitle;
+    }
+
+    public void setCardInfo(String cardInfo) {
+        this.cardInfo = cardInfo;
+    }
+
+    public void setCardColor(String cardColor) {
+        this.cardColor = cardColor;
+    }
 }

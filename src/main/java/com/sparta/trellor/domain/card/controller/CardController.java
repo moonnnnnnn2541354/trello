@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.RejectedExecutionException;
 
@@ -34,6 +31,21 @@ public class CardController {
         } catch (RejectedExecutionException | IllegalArgumentException exception) {
             return ResponseEntity.badRequest().body(new CommonResponseDto(exception.getMessage(), HttpStatus.BAD_REQUEST.value()));
         }
+    }
+
+    @PutMapping("/{cardId}")
+    public ResponseEntity<?> updateCard(
+            @PathVariable Long cardId,
+            @RequestBody CardRequestDto cardRequestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        try {
+            CardResponseDto cardResponseDto = cardService.updateCard(cardId, cardRequestDto, userDetails);
+            return ResponseEntity.ok().body(cardResponseDto);
+        } catch (RejectedExecutionException | IllegalArgumentException exception) {
+            return ResponseEntity.badRequest().body(new CommonResponseDto(exception.getMessage(), HttpStatus.BAD_REQUEST.value()));
+        }
+
     }
 
 }
