@@ -13,6 +13,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BoardColumnUpdateRequestDto {
 
-    private String columnId;
+    private Long columnId;
     private String columnName;
 }
