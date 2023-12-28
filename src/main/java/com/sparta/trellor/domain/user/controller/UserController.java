@@ -11,7 +11,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+
+import javax.naming.Binding;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,8 +26,23 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public void signup(@Valid @RequestBody SignupRequestDto requestDto) {
-        userService.signup(requestDto);
+    public ResponseEntity<?> signup(
+            @Valid @RequestBody SignupRequestDto requestDto,
+            BindingResult bindingResult
+    ) {
+        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+        List<String> errorMessages = new ArrayList<>();
+        if(fieldErrors.size() > 0) {
+            for(FieldError fieldError : fieldErrors) {
+                errorMessages.add(fieldError.getDefaultMessage());
+            }
+            return ResponseEntity.status(403).body(errorMessages);
+        }
+
+        if(userService.signup(requestDto))
+            return ResponseEntity.status(201).body("회원가입 성공했습니다.");
+        else
+            return ResponseEntity.status(409).body("이미 존재하는 사용자입니다.");
     }
 
     @DeleteMapping("/{userId}")
@@ -31,34 +52,41 @@ public class UserController {
     ) {
         Long id = userService.deleteAccount(userId, userDetails.getUser());
         if (id != null) {
-            return ResponseEntity.status(200).body("회원탈퇴가 완료되었습니다.");
+            return ResponseEntity.status(200).body("회원탈퇴 성공했습니다.");
         }
-        return ResponseEntity.status(301).body("회원탈퇴를 실패하였습니다.");
+        return ResponseEntity.status(403).body("회원탈퇴 실패했습니다.");
     }
 
     @PutMapping("/{userId}/password")
-    public void updatePassword(
+    public ResponseEntity<?> updatePassword(
             @PathVariable Long userId,
             @Valid @RequestBody PasswordUpdateRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        userService.updatePassword(userId, requestDto, userDetails.getUser());
+        if(userService.updatePassword(userId, requestDto, userDetails.getUser()))
+            return ResponseEntity.status(200).body("비밀번호가 수정되었습니다.");
+        else
+            return ResponseEntity.status(403).body("비밀번호가 일치하지 않습니다.");
     }
 
     @PutMapping("/{userId}/email")
-    public void updateEmail(
+    public ResponseEntity<?> updateEmail(
             @PathVariable Long userId,
             @Valid @RequestBody EmailUpdateRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        userService.updateEmail(userId, requestDto, userDetails.getUser());
+        if(userService.updateEmail(userId, requestDto, userDetails.getUser()))
+            return ResponseEntity.status(200).body("이메일이 수정되었습니다.");
+        else
+            return ResponseEntity.status(403).body("비밀번호가 일치하지 않습니다.");
     }
 
     @GetMapping("/logout")
-    public void logout(
+    public ResponseEntity<?> logout(
             HttpServletRequest request,
             HttpServletResponse response
     ) {
         userService.logout(request, response);
+        return ResponseEntity.status(200).body("로그아웃 되었습니다.");
     }
 }
