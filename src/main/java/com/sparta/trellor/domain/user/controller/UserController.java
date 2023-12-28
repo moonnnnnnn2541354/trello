@@ -34,18 +34,21 @@ public class UserController {
     ) {
         Long id = userService.deleteAccount(userId, userDetails.getUser());
         if (id != null) {
-            return ResponseEntity.status(200).body("회원탈퇴가 완료되었습니다.");
+            return ResponseEntity.status(200).body("회원탈퇴 성공했습니다.");
         }
-        return ResponseEntity.status(301).body("회원탈퇴를 실패하였습니다.");
+        return ResponseEntity.status(403).body("회원탈퇴 실패했습니다.");
     }
 
     @PutMapping("/{userId}/password")
-    public void updatePassword(
+    public ResponseEntity<?> updatePassword(
             @PathVariable Long userId,
             @Valid @RequestBody PasswordUpdateRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        userService.updatePassword(userId, requestDto, userDetails.getUser());
+        if(userService.updatePassword(userId, requestDto, userDetails.getUser()))
+            return ResponseEntity.status(200).body("비밀번호가 수정되었습니다.");
+        else
+            return ResponseEntity.status(403).body("비밀번호가 일치하지 않습니다.");
     }
 
     @PutMapping("/{userId}/email")

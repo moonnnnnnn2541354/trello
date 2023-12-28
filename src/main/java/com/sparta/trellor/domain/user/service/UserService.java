@@ -59,11 +59,12 @@ public class UserService {
      * 비밀번호 변경 관련 메서드
      */
     @Transactional
-    public void updatePassword(Long userId, PasswordUpdateRequestDto requestDto, User user) {
+    public boolean updatePassword(Long userId, PasswordUpdateRequestDto requestDto, User user) {
         User findUser = checkToExistUser(userId);
         checkAccessAuthority(findUser, user);
-        checkPasswordMatch(requestDto.getCurrentPassword(), user.getPassword());
+        boolean match = checkPasswordMatch(requestDto.getCurrentPassword(), user.getPassword());
         findUser.passwordUpdate(passwordEncoder.encode(requestDto.getPassword()));
+        return match;
     }
 
     /**
@@ -97,10 +98,11 @@ public class UserService {
     /**
      * 비밀번호 일치 여부 확인하는 메서드
      */
-    private void checkPasswordMatch(String rawPassword, String encodedPassword) {
+    private boolean checkPasswordMatch(String rawPassword, String encodedPassword) {
         if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            return false;
         }
+        return true;
     }
 
     public void logout(HttpServletRequest request, HttpServletResponse response) {
