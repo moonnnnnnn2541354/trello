@@ -62,4 +62,9 @@ public class UserController {
     ) {
         userService.updateEmail(userId, requestDto, userDetails.getUser());
     }
+
+    @GetMapping("/logout")
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        userService.logout(request, response);
+    }
 }

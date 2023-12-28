@@ -73,6 +73,18 @@ public class JwtUtil {
     }
 
     /**
+     * 쿠키를 삭제하는 메서드
+     */
+    public void deleteCookie(HttpServletRequest request, HttpServletResponse response) {
+        String token = getTokenFromRequest(request);
+
+        Cookie cookie = new Cookie(AUTHORIZATION_HEADER, substringToken(token));
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+    }
+
+    /**
      * Jwt 토큰에서 토큰 식별자를 자르는 메서드
      */
     public String substringToken(String tokenValue) {

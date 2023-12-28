@@ -33,20 +33,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String tokenValue = jwtUtil.getTokenFromRequest(request);
         String url = request.getRequestURI();
 
-        if(url.startsWith("/api/users/login") || url.startsWith("/api/users/signup")) {
+        if(url.startsWith("/api/users/signup") || url.startsWith("/api/users/login")) {
             filterChain.doFilter(request, response);
         } else {
             log.info(tokenValue);
+            if(tokenValue == null) {
+                doValidateToken(tokenValue);
+            }
 
             if(StringUtils.hasText(tokenValue)) {
                 tokenValue = jwtUtil.substringToken(tokenValue);
-                log.info(tokenValue);
-
-                if(!jwtUtil.validateToken(tokenValue)) {
-                    log.error("Token Error");
-                    return;
-                }
-
+                doValidateToken(tokenValue);
                 Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
 
                 try {
@@ -57,6 +54,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 }
             }
             filterChain.doFilter(request, response);
+        }
+    }
+
+    /**
+     * 토큰 검증 메서드를 호출하는 메서드
+     */
+    private void doValidateToken(String tokenValue) {
+        if(!jwtUtil.validateToken(tokenValue)) {
+            log.error("Token Error");
         }
     }
 

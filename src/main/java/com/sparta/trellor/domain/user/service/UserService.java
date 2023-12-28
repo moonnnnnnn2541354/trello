@@ -6,6 +6,10 @@ import com.sparta.trellor.domain.user.dto.request.SignupRequestDto;
 import com.sparta.trellor.domain.user.entity.User;
 import com.sparta.trellor.domain.user.entity.UserRoleEnum;
 import com.sparta.trellor.domain.user.repository.UserRepository;
+import com.sparta.trellor.global.jwt.JwtUtil;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +27,7 @@ import java.util.Optional;
 public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     /**
      * 회원가입 관련 메서드
@@ -96,5 +101,9 @@ public class UserService {
         if(!passwordEncoder.matches(rawPassword, encodedPassword)) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+    }
+
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        jwtUtil.deleteCookie(request, response);
     }
 }
