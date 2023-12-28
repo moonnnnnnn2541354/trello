@@ -24,6 +24,7 @@ bin/
 *.ipr
 out/
 application.yml
+build.gradle
 !**/src/main/**/out/
 !**/src/test/**/out/
 
