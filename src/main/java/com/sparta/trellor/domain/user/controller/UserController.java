@@ -52,12 +52,15 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/email")
-    public void updateEmail(
+    public ResponseEntity<?> updateEmail(
             @PathVariable Long userId,
             @Valid @RequestBody EmailUpdateRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        userService.updateEmail(userId, requestDto, userDetails.getUser());
+        if(userService.updateEmail(userId, requestDto, userDetails.getUser()))
+            return ResponseEntity.status(200).body("이메일이 수정되었습니다.");
+        else
+            return ResponseEntity.status(403).body("비밀번호가 일치하지 않습니다.");
     }
 
     @GetMapping("/logout")

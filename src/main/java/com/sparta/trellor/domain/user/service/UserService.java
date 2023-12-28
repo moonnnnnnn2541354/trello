@@ -71,11 +71,12 @@ public class UserService {
      * 이메일 변경 관련 메서드
      */
     @Transactional
-    public void updateEmail(Long userId, EmailUpdateRequestDto requestDto, User user) {
+    public boolean updateEmail(Long userId, EmailUpdateRequestDto requestDto, User user) {
         User findUser = checkToExistUser(userId);
         checkAccessAuthority(findUser, user);
-        checkPasswordMatch(requestDto.getPassword(), user.getPassword());
+        boolean match = checkPasswordMatch(requestDto.getPassword(), user.getPassword());
         findUser.emailUpdate(requestDto.getEmail());
+        return match;
     }
 
     /**
