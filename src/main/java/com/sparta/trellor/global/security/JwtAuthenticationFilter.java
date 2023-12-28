@@ -85,7 +85,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     ) throws IOException, ServletException {
         log.info("로그인 실패");
 
-        response.setStatus(401);
+        response.setStatus(403);
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write("닉네임 또는 비밀번호를 확인해주세요");
     }
