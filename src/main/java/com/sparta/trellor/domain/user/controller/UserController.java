@@ -4,7 +4,6 @@ import com.sparta.trellor.domain.user.dto.request.EmailUpdateRequestDto;
 import com.sparta.trellor.domain.user.dto.request.PasswordUpdateRequestDto;
 import com.sparta.trellor.domain.user.dto.request.SignupRequestDto;
 import com.sparta.trellor.domain.user.service.UserService;
-import com.sparta.trellor.global.jwt.JwtUtil;
 import com.sparta.trellor.global.security.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
-    private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
     public void signup(@Valid @RequestBody SignupRequestDto requestDto) {
@@ -57,7 +55,10 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
+    public void logout(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
         userService.logout(request, response);
     }
 }
