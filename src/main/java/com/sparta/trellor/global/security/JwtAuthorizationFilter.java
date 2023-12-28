@@ -30,24 +30,34 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        String tokenValue = jwtUtil.getJwtFromHeader(request);
+        String tokenValue = jwtUtil.getTokenFromRequest(request);
+        String url = request.getRequestURI();
 
-        if(StringUtils.hasText(tokenValue)) {
-            if(!jwtUtil.validateToken(tokenValue)) {
-                log.error("Token Error");
-                return;
+        if(url.startsWith("/api/users/login") || url.startsWith("/api/users/signup")) {
+            filterChain.doFilter(request, response);
+        } else {
+            log.info(tokenValue);
+
+            if(StringUtils.hasText(tokenValue)) {
+                tokenValue = jwtUtil.substringToken(tokenValue);
+                log.info(tokenValue);
+
+                if(!jwtUtil.validateToken(tokenValue)) {
+                    log.error("Token Error");
+                    return;
+                }
+
+                Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+
+                try {
+                    setAuthentication(info.getSubject());
+                } catch(Exception e) {
+                    log.error(e.getMessage());
+                    return;
+                }
             }
-
-            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-
-            try {
-                setAuthentication(info.getSubject());
-            } catch(Exception e) {
-                log.error(e.getMessage());
-                return;
-            }
+            filterChain.doFilter(request, response);
         }
-        filterChain.doFilter(request, response);
     }
 
     /**
