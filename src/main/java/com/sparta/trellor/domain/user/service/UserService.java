@@ -31,7 +31,7 @@ public class UserService {
     /**
      * 회원가입 관련 메서드
      */
-    public void signup(SignupRequestDto requestDto) {
+    public boolean signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
         String email = requestDto.getEmail();
         String password = passwordEncoder.encode(requestDto.getPassword());
@@ -39,8 +39,9 @@ public class UserService {
 
         if (user.isEmpty()) {
             userRepository.save(new User(username, email, password, UserRoleEnum.USER));
+            return true;
         } else {
-            throw new IllegalArgumentException("이미 존재하는 사용자입니다.");
+            return false;
         }
     }
 
@@ -58,22 +59,31 @@ public class UserService {
      * 비밀번호 변경 관련 메서드
      */
     @Transactional
-    public void updatePassword(Long userId, PasswordUpdateRequestDto requestDto, User user) {
+    public boolean updatePassword(Long userId, PasswordUpdateRequestDto requestDto, User user) {
         User findUser = checkToExistUser(userId);
         checkAccessAuthority(findUser, user);
-        checkPasswordMatch(requestDto.getCurrentPassword(), user.getPassword());
+        boolean match = checkPasswordMatch(requestDto.getCurrentPassword(), user.getPassword());
         findUser.passwordUpdate(passwordEncoder.encode(requestDto.getPassword()));
+        return match;
     }
 
     /**
      * 이메일 변경 관련 메서드
      */
     @Transactional
-    public void updateEmail(Long userId, EmailUpdateRequestDto requestDto, User user) {
+    public boolean updateEmail(Long userId, EmailUpdateRequestDto requestDto, User user) {
         User findUser = checkToExistUser(userId);
         checkAccessAuthority(findUser, user);
-        checkPasswordMatch(requestDto.getPassword(), user.getPassword());
+        boolean match = checkPasswordMatch(requestDto.getPassword(), user.getPassword());
         findUser.emailUpdate(requestDto.getEmail());
+        return match;
+    }
+
+    /**
+     * 로그아웃 관련 메서드
+     */
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        jwtUtil.deleteCookie(request, response);
     }
 
     /**
@@ -96,13 +106,10 @@ public class UserService {
     /**
      * 비밀번호 일치 여부 확인하는 메서드
      */
-    private void checkPasswordMatch(String rawPassword, String encodedPassword) {
+    private boolean checkPasswordMatch(String rawPassword, String encodedPassword) {
         if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            return false;
         }
-    }
-
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
-        jwtUtil.deleteCookie(request, response);
+        return true;
     }
 }
