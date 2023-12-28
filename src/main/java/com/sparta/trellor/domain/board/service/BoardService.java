@@ -59,9 +59,8 @@ public class BoardService {
                 () -> new UsernameNotFoundException("선택하신 Board는 존재하지 않습니다.")
         );
         return new BoardReadAllResponseDto(board);
+
     }
-
-
     public BoardInviteResponseDto boardInvite(BoardInviteRequestDto requestDto) {
         Long boardId = requestDto.getBoardId();
         List<Long> invitedUserIds = requestDto.getInvitedUserIds();
@@ -78,14 +77,9 @@ public class BoardService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new UsernameNotFoundException("초대할 보드를 찾을 수 없습니다."));
 
-        User loginUser = getLoggedInUser();
-
-        if (loginUser.getId().equals(board.getBoardId())) {
             board.update(requestDto);
-            return new BoardInviteResponseDto("수정되었습니다.");
-        }
 
-        return new BoardInviteResponseDto("당신에게는 수정 권한이 없습니다.");
+        return new BoardInviteResponseDto("수정되었습니다.");
     }
 
     @Transactional
@@ -93,23 +87,10 @@ public class BoardService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new UsernameNotFoundException("삭제할 보드를 찾을 수 없습니다."));
 
-        User loginUser = getLoggedInUser();
+        // 아무나 삭제 가능하게 권한 검사 생략
+        boardRepository.delete(board);
 
-        if (isCreator(loginUser, board)) {
-            boardRepository.delete(board);
-            return new BoardInviteResponseDto("보드가 삭제되었습니다.");
-        }
-
-        return new BoardInviteResponseDto("당신에게는 삭제 권한이 없습니다.");
-    }
-
-    private User getLoggedInUser() {
-        return userRepository.findById(SecurityUtil.getPrincipal().get().getId())
-                .orElseThrow(() -> new UsernameNotFoundException("로그인한 회원을 찾을 수 없습니다."));
-    }
-
-    private boolean isCreator(User user, Board board) {
-        return user.getId().equals(board.getBoardId());
+        return new BoardInviteResponseDto("보드가 삭제되었습니다.");
     }
 
 }
