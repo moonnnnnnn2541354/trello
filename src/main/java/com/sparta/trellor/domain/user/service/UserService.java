@@ -80,6 +80,13 @@ public class UserService {
     }
 
     /**
+     * 로그아웃 관련 메서드
+     */
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        jwtUtil.deleteCookie(request, response);
+    }
+
+    /**
      * 존재하는 사용자인지 확인하는 메서드
      */
     private User checkToExistUser(Long userId) {
@@ -104,9 +111,5 @@ public class UserService {
             return false;
         }
         return true;
-    }
-
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
-        jwtUtil.deleteCookie(request, response);
     }
 }

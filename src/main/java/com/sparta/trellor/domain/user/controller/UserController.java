@@ -64,10 +64,11 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public void logout(
+    public ResponseEntity<?> logout(
             HttpServletRequest request,
             HttpServletResponse response
     ) {
         userService.logout(request, response);
+        return ResponseEntity.status(200).body("로그아웃 되었습니다.");
     }
 }
