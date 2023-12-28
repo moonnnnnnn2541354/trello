@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             HttpServletResponse response,
             FilterChain chain,
             Authentication authResult
-    ) {
+    ) throws IOException {
         log.info("로그인 성공");
 
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
@@ -68,6 +68,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String token = jwtUtil.createToken(username, role);
         log.info(token);
         jwtUtil.addJwtToCookie(token, response);
+
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write("로그인 성공했습니다.");
     }
 
     /**
