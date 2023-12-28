@@ -1,9 +1,16 @@
 package com.sparta.trellor.domain.column.controller;
 
+import com.sparta.trellor.domain.column.dto.BoardColumnRequestDto;
+import com.sparta.trellor.domain.column.dto.BoardColumnUpdateRequestDto;
+import com.sparta.trellor.domain.column.dto.MessageUpdateDto;
 import com.sparta.trellor.domain.column.service.BoardColumnService;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,8 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/column")
 @RequiredArgsConstructor
 public class BoardColumnController {
+
     private final BoardColumnService columnService;
 
-    @PostMapping
-    public
+
+    @PutMapping
+    public MessageUpdateDto updateBoardColumn(@RequestBody BoardColumnUpdateRequestDto requestDto) {
+        return columnService.updateBoardColumn(requestDto);
+    }
 }
+

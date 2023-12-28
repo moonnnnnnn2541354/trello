@@ -11,8 +11,8 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoardColumnUpdateDto {
+public class MessageUpdateDto {
 
-    private String columnId;
+    private String msg;
     private String columnName;
 }
