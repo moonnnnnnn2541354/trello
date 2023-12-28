@@ -20,8 +20,11 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public void signup(@Valid @RequestBody SignupRequestDto requestDto) {
-        userService.signup(requestDto);
+    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto requestDto) {
+        if(userService.signup(requestDto))
+            return ResponseEntity.status(201).body("회원가입 성공했습니다.");
+        else
+            return ResponseEntity.status(409).body("이미 존재하는 사용자입니다.");
     }
 
     @DeleteMapping("/{userId}")

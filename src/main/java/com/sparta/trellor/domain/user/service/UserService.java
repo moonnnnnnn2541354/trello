@@ -31,7 +31,7 @@ public class UserService {
     /**
      * 회원가입 관련 메서드
      */
-    public void signup(SignupRequestDto requestDto) {
+    public boolean signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
         String email = requestDto.getEmail();
         String password = passwordEncoder.encode(requestDto.getPassword());
@@ -39,6 +39,7 @@ public class UserService {
 
         if (user.isEmpty()) {
             userRepository.save(new User(username, email, password, UserRoleEnum.USER));
+            return true;
         } else {
             throw new IllegalArgumentException("이미 존재하는 사용자입니다.");
         }
