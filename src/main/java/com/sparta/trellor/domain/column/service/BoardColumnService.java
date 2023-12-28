@@ -1,7 +1,10 @@
 package com.sparta.trellor.domain.column.service;
 
+import com.sparta.trellor.domain.column.dto.BoardColumnMoveRequestDto;
+import com.sparta.trellor.domain.column.dto.BoardColumnMoveResponseDto;
 import com.sparta.trellor.domain.column.dto.BoardColumnRequestDto;
 import com.sparta.trellor.domain.column.dto.BoardColumnUpdateRequestDto;
+import com.sparta.trellor.domain.column.dto.MessageDto;
 import com.sparta.trellor.domain.column.dto.MessageUpdateDto;
 import com.sparta.trellor.domain.column.entity.BoardColumn;
 import com.sparta.trellor.domain.column.repository.BoardColumnRepository;
@@ -33,31 +36,31 @@ public class BoardColumnService {
 
         findBoardColumn(boardColumn);
 
-        return new MessageDto("해당 컬럼이 추가되었습니다");
+        return new MessageDto("컬럼이 추가되었습니다");
     }
 
     @Transactional
     public void findBoardColumn (BoardColumn boardColumn){
         BoardColumn boardColumnTemp = boardColumnRepository.findByColumnName(boardColumn.getColumnName()).orElseThrow(
-            ()-> new IllegalArgumentException("해당 컬럼 업슴")
+            ()-> new IllegalArgumentException("해당 컬럼 없음")
         );
         boardColumnTemp.update(boardColumn.getColumnId());
     }
 
     @Transactional
     public MessageUpdateDto updateBoardColumn(BoardColumnUpdateRequestDto requestDto) {
-        System.out.println("update문 실행");
+        System.out.println("update");
         System.out.println("requestDto.getColumnName() = " + requestDto.getColumnName());
         BoardColumn boardColumn = boardColumnRepository.findById(requestDto.getColumnId()).orElseThrow(() ->
             new IllegalArgumentException("해당 컬럼은 존재하지 않습니다."));
 
         boardColumn.updateName(requestDto.getColumnName());
 
-        return new MessageUpdateDto("해당 컬럼명이 수정되었습니다", requestDto.getColumnName());
+        return new MessageUpdateDto("컬럼명이 수정되었습니다", requestDto.getColumnName());
     }
 
     public MessageDto deleteBoardColumn(Long columnId) {
-        System.out.println("여기는 delete column 시작");
+        System.out.println("delete column");
         BoardColumn boardColumn = boardColumnRepository.findById(columnId).orElseThrow(() ->
             new IllegalArgumentException("해당 컬럼은 존재하지 않습니다."));
         boardColumnRepository.deleteById(columnId);

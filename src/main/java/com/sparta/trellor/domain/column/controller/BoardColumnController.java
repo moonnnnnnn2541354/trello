@@ -1,7 +1,10 @@
 package com.sparta.trellor.domain.column.controller;
 
+import com.sparta.trellor.domain.column.dto.BoardColumnMoveRequestDto;
+import com.sparta.trellor.domain.column.dto.BoardColumnMoveResponseDto;
 import com.sparta.trellor.domain.column.dto.BoardColumnRequestDto;
 import com.sparta.trellor.domain.column.dto.BoardColumnUpdateRequestDto;
+import com.sparta.trellor.domain.column.dto.MessageDto;
 import com.sparta.trellor.domain.column.dto.MessageUpdateDto;
 import com.sparta.trellor.domain.column.service.BoardColumnService;
 import lombok.NoArgsConstructor;
