@@ -1,5 +1,6 @@
 package com.sparta.trellor.domain.user.entity;
 
+import com.sparta.trellor.domain.user.dto.request.PasswordUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,13 @@ public class User {
         this.email = email;
         this.password = password;
         this.role = role;
+    }
+    public void passwordUpdate(String encodingNewPassword) {
+        this.password = encodingNewPassword;
+    }
+
+    public void emailUpdate(String email) {
+        this.email = email;
     }
 }
 

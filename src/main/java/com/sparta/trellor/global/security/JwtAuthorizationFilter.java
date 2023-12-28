@@ -30,24 +30,40 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        String tokenValue = jwtUtil.getJwtFromHeader(request);
+        String tokenValue = jwtUtil.getTokenFromRequest(request);
+        String url = request.getRequestURI();
 
-        if(StringUtils.hasText(tokenValue)) {
-            if(!jwtUtil.validateToken(tokenValue)) {
-                log.error("Token Error");
-                return;
+        if (url.startsWith("/api/users/signup") || url.startsWith("/api/users/login")) {
+            filterChain.doFilter(request, response);
+        } else {
+            log.info(tokenValue);
+            if (tokenValue == null) {
+                doValidateToken(tokenValue);
             }
 
-            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+            if (StringUtils.hasText(tokenValue)) {
+                tokenValue = jwtUtil.substringToken(tokenValue);
+                doValidateToken(tokenValue);
+                Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
 
-            try {
-                setAuthentication(info.getSubject());
-            } catch(Exception e) {
-                log.error(e.getMessage());
-                return;
+                try {
+                    setAuthentication(info.getSubject());
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    return;
+                }
             }
+            filterChain.doFilter(request, response);
         }
-        filterChain.doFilter(request, response);
+    }
+
+    /**
+     * 토큰 검증 메서드를 호출하는 메서드
+     */
+    private void doValidateToken(String tokenValue) {
+        if (!jwtUtil.validateToken(tokenValue)) {
+            log.error("Token Error");
+        }
     }
 
     /**
