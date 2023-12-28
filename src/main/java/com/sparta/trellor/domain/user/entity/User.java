@@ -1,9 +1,15 @@
 package com.sparta.trellor.domain.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.sparta.trellor.domain.board.entity.Board;
+import com.sparta.trellor.domain.board.entity.UserBoard;
 import com.sparta.trellor.domain.user.dto.request.PasswordUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -39,6 +45,32 @@ public class User {
 
     public void emailUpdate(String email) {
         this.email = email;
+    }
+
+
+     // User : Board = 1 : n
+
+    @OneToMany(orphanRemoval = true,fetch = FetchType.LAZY )
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    private List<Board> boards = new ArrayList<>();
+
+
+    // User : userBoard = 1 : n
+
+    @OneToMany(orphanRemoval = true,fetch = FetchType.LAZY  )
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    private List<UserBoard> userBoards = new ArrayList<>();
+
+
+
+    public void addBoardList(Board board){
+        this.boards.add(board);
+
+    }
+    public void addUserBoardList(UserBoard userBoard){
+        this.userBoards.add(userBoard);
     }
 }
 

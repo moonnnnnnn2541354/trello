@@ -30,10 +30,10 @@ public class BoardColumn extends BaseTime {
     @Column(name = "column_no")
     private Long columnNo;
 
-    @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "column_id")
-    @JsonBackReference
-    private List<Card> cards = new ArrayList<>();
+//    @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "column_id")
+//    @JsonBackReference
+//    private List<Card> cards = new ArrayList<>();
 
 
     public BoardColumn(BoardColumnRequestDto columnRequestDto) {
@@ -48,7 +48,7 @@ public class BoardColumn extends BaseTime {
         this.columnName = columnName;
     }
 
-    public void addCard(Card card) {
-        this.cards.add(card);
-    }
+//    public void addCard(Card card) {
+//        this.cards.add(card);
+//    }
 }

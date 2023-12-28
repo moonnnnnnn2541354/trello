@@ -1,10 +1,14 @@
 package com.sparta.trellor.domain.board.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.sparta.trellor.domain.board.dto.BoardCreateRequestDto;
+import com.sparta.trellor.domain.column.entity.BoardColumn;
+import com.sparta.trellor.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -12,7 +16,9 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @Table(name = "board")
+@NoArgsConstructor
 public class Board {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_id")
@@ -27,8 +33,43 @@ public class Board {
     @Column(name = "board_info", nullable = false)
     private String boardInfo;
 
-    public Board() {
+    /**
+     * Board : userBoard = 1 : n
+     */
+    @OneToMany(orphanRemoval = true,fetch = FetchType.LAZY )
+    @JoinColumn(name = "board_id")
+    @JsonBackReference
+    private List<UserBoard> userBoards = new ArrayList<>();
 
+    /**
+     * Board : BoardColumn = 1 : n
+     */
+
+    @OneToMany(orphanRemoval = true,fetch = FetchType.LAZY )
+    @JoinColumn(name = "board_id")
+    @JsonBackReference
+    private List<BoardColumn> boardColumns = new ArrayList<>();
+
+
+    public Board(BoardCreateRequestDto requestDto, User user) {
+        this.boardName = requestDto.getBoardName();
+        this.boardColor = requestDto.getBoardColor();
+        this.boardInfo = requestDto.getBoardInfo();
+        user.addBoardList(this);
     }
 
+    public void addUserBoardList(UserBoard userBoard) {
+        this.userBoards.add(userBoard);
+    }
+
+
+    public void addUserBoardList(BoardColumn boardColumn) {
+        this.boardColumns.add(boardColumn);
+    }      
+  
+    public void update(BoardCreateRequestDto requestDto) {
+        this.boardName = requestDto.getBoardName();
+        this.boardColor = requestDto.getBoardColor();
+        this.boardInfo = requestDto.getBoardInfo();
+    }
 }

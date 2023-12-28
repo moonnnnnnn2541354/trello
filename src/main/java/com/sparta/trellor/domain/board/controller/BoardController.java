@@ -1,49 +1,52 @@
 package com.sparta.trellor.domain.board.controller;
 
-import com.sparta.trellor.domain.board.entity.Board;
+
+import com.sparta.trellor.domain.board.dto.*;
 import com.sparta.trellor.domain.board.service.BoardService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/api/boards")
+@RequestMapping("/api/board")
+@RequiredArgsConstructor
 public class BoardController {
+    private final BoardService boardService;
 
-    @Autowired
-    private BoardService boardService;
 
-    @GetMapping
-    public ResponseEntity<List<Board>> getAllBoards() {
-        List<Board> boards = boardService.getAllBoards();
-        return new ResponseEntity<>(boards, HttpStatus.OK);
+    @GetMapping("/all")
+    public List<BoardReadAllResponseDto> readAllBoard() {
+        return boardService.readAllBoard();
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<Board> createBoard(@RequestBody Map<String, String> boardData) {
-        String boardName = boardData.get("boardName");
-        String backgroundColor = boardData.get("backgroundColor");
-        String boardInfo = boardData.get("boardInfo");
-        Board createdBoard = boardService.createBoard(boardName, backgroundColor,boardInfo);
-        return new ResponseEntity<>(createdBoard, HttpStatus.CREATED);
+    @GetMapping("/{boardId}")
+    public BoardReadAllResponseDto readChoiceBoard(@PathVariable Long boardId) {
+        return boardService.readChoiceBoard(boardId);
     }
 
-//
-//    @PutMapping("/{boardId}/update")
-//    public ResponseEntity<Board> updateBoard(
-//            @PathVariable Long boardId,
-//            @RequestParam String boardName,
-//            @RequestParam String backgroundColor) {
-//        Board updatedBoard = boardService.updateBoard(boardId, boardName, backgroundColor);
-//        return new ResponseEntity<>(updatedBoard, HttpStatus.OK);
-//    }
-//
-//    @DeleteMapping("/{boardId}/delete")
-//    public ResponseEntity<Void> deleteBoard(@PathVariable Long boardId) {
-//        boardService.deleteBoard(boardId);
-//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @PostMapping
+    public BoardCreateResponseDto createBoard(@RequestBody BoardCreateRequestDto requestDto)  {
+        System.out.println("createBoard called with: " + requestDto);
+        return boardService.createBoard(requestDto);
     }
+    @PostMapping("/invite")
+    public BoardInviteResponseDto boardInvite(@RequestBody BoardInviteRequestDto requestDto) {
+        return boardService.boardInvite(requestDto);
+    }
+
+    @PutMapping("/{boardId}")
+    public BoardInviteResponseDto boardUpdate(@PathVariable Long boardId, @RequestBody BoardCreateRequestDto requestDto){
+        return boardService.boardUpdate(boardId,requestDto);
+    }
+
+    @DeleteMapping("/{boardId}")
+    public BoardInviteResponseDto deleteBoard(@PathVariable Long boardId){
+        return boardService.deleteBoard(boardId);
+    }
+
+}
+
