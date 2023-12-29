@@ -53,10 +53,9 @@ public class CommentController {
     public ResponseEntity<String> delete(
         @AuthenticationPrincipal UserDetailsImpl userdetails,
         @PathVariable(name = "cardId") Long cardId,
-        @PathVariable(name = "commentId") Long commentId,
-        @Valid @RequestBody CommentRequestDto requestDto) {
+        @PathVariable(name = "commentId") Long commentId) {
 
-        commentService.delete(userdetails.getUser(), cardId, commentId, requestDto);
+        commentService.delete(userdetails.getUser(), cardId, commentId);
 
         return ResponseEntity.status(HttpStatus.OK).body("댓글이 삭제 되었습니다.");
     }

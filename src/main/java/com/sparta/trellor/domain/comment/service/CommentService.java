@@ -45,8 +45,7 @@ public class CommentService {
         return new CommentResponseDto(comment);
     }
 
-    public void delete(
-        User user, Long cardId, Long commentId, CommentRequestDto requestDto) {
+    public void delete(User user, Long cardId, Long commentId) {
 
         Card card = checkCard(cardId);
         Comment comment = checkComment(commentId);
