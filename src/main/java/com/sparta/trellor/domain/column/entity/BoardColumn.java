@@ -1,11 +1,13 @@
 package com.sparta.trellor.domain.column.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.sparta.trellor.domain.card.entity.Card;
 import com.sparta.trellor.domain.column.dto.BoardColumnRequestDto;
 import com.sparta.trellor.domain.utils.BaseTime;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
 import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,10 +32,10 @@ public class BoardColumn extends BaseTime {
     @Column(name = "column_no")
     private Long columnNo;
 
-//    @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "column_id")
-//    @JsonBackReference
-//    private List<Card> cards = new ArrayList<>();
+    @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "column_id")
+    @JsonBackReference
+    private List<Card> cards = new ArrayList<>();
 
 
     public BoardColumn(BoardColumnRequestDto columnRequestDto) {
@@ -48,7 +50,7 @@ public class BoardColumn extends BaseTime {
         this.columnName = columnName;
     }
 
-//    public void addCard(Card card) {
-//        this.cards.add(card);
-//    }
+    public void addCard(Card card) {
+        this.cards.add(card);
+    }
 }
