@@ -33,10 +33,9 @@ class SignupRequestDtoTest implements CommonTest {
         @Test
         void createSignupRequestDTO_success() {
             // given
-            SignupRequestDto signupRequestDto = new SignupRequestDto();
-            signupRequestDto.setUsername(TEST_USER_NAME);
-            signupRequestDto.setPassword(TEST_USER_PASSWORD);
-            signupRequestDto.setEmail(TEST_USER_EMAIL);
+            SignupRequestDto signupRequestDto =
+                    new SignupRequestDto
+                            (TEST_USER_NAME, TEST_USER_PASSWORD, TEST_USER_EMAIL, false);
 
             // when
             Set<ConstraintViolation<SignupRequestDto>> violations = validator.validate(signupRequestDto);
@@ -49,10 +48,13 @@ class SignupRequestDtoTest implements CommonTest {
         @Test
         void createSignupRequestDTO_wrongUsername() {
             // given
-            SignupRequestDto signupRequestDto = new SignupRequestDto();
-            signupRequestDto.setUsername("Invalid username");
-            signupRequestDto.setPassword(TEST_USER_PASSWORD);
-            signupRequestDto.setEmail(TEST_USER_EMAIL);
+            SignupRequestDto signupRequestDto =
+                    new SignupRequestDto(
+                            "Invalid username",
+                            TEST_USER_PASSWORD,
+                            TEST_USER_EMAIL,
+                            false
+                    );
 
             // when
             Set<ConstraintViolation<SignupRequestDto>> violations = validator.validate(signupRequestDto);
@@ -68,10 +70,13 @@ class SignupRequestDtoTest implements CommonTest {
         @Test
         void createSignupRequestDTO_wrongPassword() {
             // given
-            SignupRequestDto signupRequestDto = new SignupRequestDto();
-            signupRequestDto.setUsername(TEST_USER_NAME);
-            signupRequestDto.setPassword("Invalid password");
-            signupRequestDto.setEmail(TEST_USER_EMAIL);
+            SignupRequestDto signupRequestDto =
+                    new SignupRequestDto(
+                            TEST_USER_NAME,
+                            "Invalid password",
+                            TEST_USER_EMAIL,
+                            false
+                    );
 
             // when
             Set<ConstraintViolation<SignupRequestDto>> violations = validator.validate(signupRequestDto);
@@ -87,10 +92,13 @@ class SignupRequestDtoTest implements CommonTest {
         @Test
         void createSignupRequestDTO_wrongEmail() {
             // given
-            SignupRequestDto signupRequestDto = new SignupRequestDto();
-            signupRequestDto.setUsername(TEST_USER_NAME);
-            signupRequestDto.setPassword(TEST_USER_PASSWORD);
-            signupRequestDto.setEmail("Invalid email");
+            SignupRequestDto signupRequestDto =
+                    new SignupRequestDto(
+                            TEST_USER_NAME,
+                            TEST_USER_PASSWORD,
+                            "Invalid email",
+                            false
+                    );
 
             // when
             Set<ConstraintViolation<SignupRequestDto>> violations = validator.validate(signupRequestDto);
