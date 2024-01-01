@@ -3,6 +3,7 @@ package com.sparta.trellor.domain.card.controller;
 import com.sparta.trellor.domain.card.dto.CardRequestDto;
 import com.sparta.trellor.domain.card.dto.CardResponseDto;
 import com.sparta.trellor.domain.card.dto.CommonResponseDto;
+import com.sparta.trellor.domain.card.entity.Card;
 import com.sparta.trellor.domain.card.service.CardService;
 import com.sparta.trellor.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -67,4 +68,30 @@ public class CardController {
         }
     }
 
+    @PutMapping("/{cardId}/move")
+    public ResponseEntity<?> moveCard(
+            @PathVariable Long boardId,
+            @PathVariable Long columnId,
+            @PathVariable Long cardId,
+            @RequestParam(required = false) Long newColumnId,
+            @RequestParam(required = false) Integer newPosition,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        try {
+            if (newColumnId != null && newPosition != null) {
+                // 카드를 다른 컬럼으로 이동하는 경우
+                CardResponseDto cardResponseDto = cardService.moveCardToAnotherColumn(boardId, columnId, newColumnId, cardId, userDetails);
+                return ResponseEntity.ok().body(cardResponseDto);
+            } else if (newPosition != null) {
+                // 같은 컬럼 내에서 카드 위치를 변경하는 경우
+                CardResponseDto cardResponseDto = cardService.changeCardPositionInSameColumn(boardId, columnId, cardId, newPosition, userDetails);
+                return ResponseEntity.ok().body(cardResponseDto);
+            } else {
+                // 필요한 매개변수가 제공되지 않는 경우
+                return ResponseEntity.badRequest().body(new CommonResponseDto("카드를 올바르게 이동할 수 없습니다.", HttpStatus.BAD_REQUEST.value()));
+            }
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.badRequest().body(new CommonResponseDto(exception.getMessage(), HttpStatus.BAD_REQUEST.value()));
+        }
+    }
 }

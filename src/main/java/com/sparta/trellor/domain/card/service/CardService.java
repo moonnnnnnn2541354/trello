@@ -10,6 +10,7 @@ import com.sparta.trellor.domain.column.entity.BoardColumn;
 import com.sparta.trellor.domain.column.repository.BoardColumnRepository;
 import com.sparta.trellor.domain.user.entity.User;
 import com.sparta.trellor.global.security.UserDetailsImpl;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,7 +74,45 @@ public class CardService {
         return new CardResponseDto(card);
     }
 
-    //카드 예외처리
+    @Transactional
+    public CardResponseDto changeCardPositionInSameColumn(Long boardId, Long columnId, Long cardId, int newCardNo, UserDetailsImpl userDetails) {
+        BoardColumn column = boardColumnRepository.findById(columnId).orElseThrow(NullPointerException::new);
+        Card card = getUserCard(cardId, userDetails.getUser());
+
+        // 카드가 해당 컬럼에 있는지 확인
+        if (!column.getCards().contains(card)) {
+            throw new IllegalArgumentException("현재 카드가 선택한 컬럼에 존재하지 않습니다.");
+        }
+
+        // 새로운 위치가 유효한지 확인 (0 이상이고, 컬럼 내 카드의 개수보다 작거나 같아야 함)
+        if (newCardNo < 0 || newCardNo >= column.getCards().size()) {
+            throw new IllegalArgumentException("유효하지 않은 위치입니다.");
+        }
+
+        // 카드 위치 변경
+        column.moveCardPosition(card, newCardNo);
+
+        return new CardResponseDto(card);
+    }
+
+    @Transactional
+    public CardResponseDto moveCardToAnotherColumn(Long boardId, Long currentColumnId, Long newColumnId, Long cardId, UserDetailsImpl userDetails) {
+        BoardColumn currentColumn = boardColumnRepository.findById(currentColumnId).orElseThrow(NullPointerException::new);
+        BoardColumn newColumn = boardColumnRepository.findById(newColumnId).orElseThrow(NullPointerException::new);
+        Card card = getUserCard(cardId, userDetails.getUser());
+
+        // 카드가 현재 컬럼에 있는지 확인
+        if (!currentColumn.getCards().contains(card)) {
+            throw new IllegalArgumentException("현재 카드가 선택한 컬럼에 존재하지 않습니다.");
+        }
+
+        // 카드를 새 컬럼으로 이동시킴
+        newColumn.addCard(card);
+
+        return new CardResponseDto(card);
+    }
+
+        //카드 예외처리
     private Card getCard(Long cardId) {
         return cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));

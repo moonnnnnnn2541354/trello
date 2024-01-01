@@ -25,8 +25,10 @@ public class Card extends BaseTime {
     private String cardInfo;
     @Column(name = "card_color", nullable = false)
     private String cardColor;
+    @Column(name = "card_no", nullable = false)
+    private int cardNo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_Id")
     private User user;
 
@@ -58,5 +60,8 @@ public class Card extends BaseTime {
 
     public void setCardColor(String cardColor) {
         this.cardColor = cardColor;
+    }
+
+    public void setBoardColumn(BoardColumn newColumn) {
     }
 }
