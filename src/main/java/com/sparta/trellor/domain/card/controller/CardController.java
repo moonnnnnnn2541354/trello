@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.RejectedExecutionException;
 
-@RequestMapping("/api/cards")
+@RequestMapping("/api/{boardId}/{columnId}/cards")
 @RestController
 @RequiredArgsConstructor
 public class CardController {
@@ -22,11 +22,13 @@ public class CardController {
 
     @PostMapping
     public ResponseEntity<?> createCards(
+            @PathVariable Long boardId,
+            @PathVariable Long columnId,
             @RequestBody CardRequestDto cardRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
+            ) {
         try {
-            CardResponseDto cardResponseDto = cardService.createCards(cardRequestDto, userDetails);
+            CardResponseDto cardResponseDto = cardService.createCards(boardId, columnId, cardRequestDto, userDetails);
             return ResponseEntity.ok().body(cardResponseDto);
         } catch (RejectedExecutionException | IllegalArgumentException exception) {
             return ResponseEntity.badRequest().body(new CommonResponseDto(exception.getMessage(), HttpStatus.BAD_REQUEST.value()));
@@ -35,12 +37,14 @@ public class CardController {
 
     @PutMapping("/{cardId}")
     public ResponseEntity<?> updateCard(
+            @PathVariable String boardId,
+            @PathVariable Long columnId,
             @PathVariable Long cardId,
             @RequestBody CardRequestDto cardRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         try {
-            CardResponseDto cardResponseDto = cardService.updateCard(cardId, cardRequestDto, userDetails);
+            CardResponseDto cardResponseDto = cardService.updateCard(Long.valueOf(boardId), columnId, cardId, cardRequestDto, userDetails);
             return ResponseEntity.ok().body(cardResponseDto);
         } catch (RejectedExecutionException | IllegalArgumentException exception) {
             return ResponseEntity.badRequest().body(new CommonResponseDto(exception.getMessage(), HttpStatus.BAD_REQUEST.value()));
@@ -50,6 +54,8 @@ public class CardController {
 
     @DeleteMapping("/{cardId}")
     public ResponseEntity<CommonResponseDto> deleteCard(
+            @PathVariable String boardId,
+            @PathVariable Long columnId,
             @PathVariable Long cardId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {

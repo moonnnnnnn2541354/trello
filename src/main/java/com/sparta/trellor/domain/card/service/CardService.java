@@ -1,23 +1,32 @@
 package com.sparta.trellor.domain.card.service;
 
+import com.sparta.trellor.domain.board.entity.Board;
+import com.sparta.trellor.domain.board.repository.BoardRepository;
 import com.sparta.trellor.domain.card.dto.CardRequestDto;
 import com.sparta.trellor.domain.card.dto.CardResponseDto;
 import com.sparta.trellor.domain.card.entity.Card;
 import com.sparta.trellor.domain.card.repository.CardRepository;
+import com.sparta.trellor.domain.column.entity.BoardColumn;
+import com.sparta.trellor.domain.column.repository.BoardColumnRepository;
 import com.sparta.trellor.domain.user.entity.User;
 import com.sparta.trellor.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CardService {
 
+    private final BoardRepository boardRepository;
+    private final BoardColumnRepository boardColumnRepository;
     private final CardRepository cardRepository;
-    public CardResponseDto createCards(CardRequestDto cardRequestDto, UserDetailsImpl userDetails) {
+
+    public CardResponseDto createCards(Long boardId, Long columnId, CardRequestDto cardRequestDto, UserDetailsImpl userDetails) {
 
         // 제목(title)과 내용(content)이 비어 있는 경우
         if (cardRequestDto.getCardTitle() == null || cardRequestDto.getCardTitle().trim().isEmpty()) {
@@ -28,18 +37,20 @@ public class CardService {
             throw new IllegalArgumentException("카드 내용이 비어있습니다. 내용을 작성해 주세요.");
         }
 
-    //받아온 정보 객체에 저장
-    Card card = new Card(cardRequestDto, userDetails);
+        //받아온 정보 객체에 저장
+        Board board = boardRepository.findById(boardId).orElseThrow(NullPointerException::new);
+        BoardColumn column = boardColumnRepository.findById(columnId).orElseThrow(NullPointerException::new);
+        Card card = new Card(cardRequestDto, userDetails, board, column);
 
-    //DB에 저장
-    Card saveCard = cardRepository.save(card);
+        //DB에 저장
+        Card saveCard = cardRepository.save(card);
 
-    //DB에 저장된 값 반환
+        //DB에 저장된 값 반환
         return new CardResponseDto(saveCard);
     }
 
     @Transactional
-    public CardResponseDto updateCard(Long cardId, CardRequestDto cardRequestDto, UserDetailsImpl userDetails) {
+    public CardResponseDto updateCard(Long boardId, Long columnId, Long cardId, CardRequestDto cardRequestDto, UserDetailsImpl userDetails) {
 
         // 제목(title)과 내용(info)이 비어 있는 경우
         if (cardRequestDto.getCardTitle() == null || cardRequestDto.getCardTitle().trim().isEmpty()) {
@@ -50,6 +61,9 @@ public class CardService {
             throw new IllegalArgumentException("카드 내용이 비어있습니다. 내용을 작성해 주세요.");
         }
 
+        //받아온 정보 객체에 저장
+        Board board = boardRepository.findById(boardId).orElseThrow(NullPointerException::new);
+        BoardColumn column = boardColumnRepository.findById(columnId).orElseThrow(NullPointerException::new);
         Card card = getUserCard(cardId, userDetails.getUser());
 
         card.setCardTitle(cardRequestDto.getCardTitle());
