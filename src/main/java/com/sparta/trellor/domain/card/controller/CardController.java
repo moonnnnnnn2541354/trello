@@ -7,6 +7,7 @@ import com.sparta.trellor.domain.card.dto.msg.CardMessageDeleteDto;
 import com.sparta.trellor.domain.card.dto.msg.CardMessageResponseDto;
 import com.sparta.trellor.domain.card.service.CardService;
 import com.sparta.trellor.global.security.UserDetailsImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class CardController {
     public ResponseEntity<CardMessageResponseDto> createCards(
             @PathVariable Long boardId,
             @PathVariable Long columnId,
-            @RequestBody CardRequestDto cardRequestDto,
+            @Valid @RequestBody CardRequestDto cardRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         CardMessageResponseDto cardResponseDto =
@@ -61,7 +62,7 @@ public class CardController {
             @PathVariable Long boardId,
             @PathVariable Long columnId,
             @PathVariable Long cardId,
-            @RequestBody CardRequestDto cardRequestDto,
+            @Valid @RequestBody CardRequestDto cardRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         CardMessageResponseDto responseDto =
