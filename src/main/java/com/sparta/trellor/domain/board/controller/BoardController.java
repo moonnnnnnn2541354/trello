@@ -21,7 +21,7 @@ public class BoardController {
 
 
     @GetMapping("/all")
-    public List<BoardReadAllResponseDto> readAllBoard() {
+    public List<BoardReadResponseDto> readAllBoard() {
         return boardService.readAllBoard();
     }
 
