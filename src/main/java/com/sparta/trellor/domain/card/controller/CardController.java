@@ -3,6 +3,8 @@ package com.sparta.trellor.domain.card.controller;
 import com.sparta.trellor.domain.card.dto.CardRequestDto;
 import com.sparta.trellor.domain.card.dto.CardResponseDto;
 import com.sparta.trellor.domain.card.dto.CommonResponseDto;
+import com.sparta.trellor.domain.card.dto.msg.CardMessageDeleteDto;
+import com.sparta.trellor.domain.card.dto.msg.CardMessageResponseDto;
 import com.sparta.trellor.domain.card.service.CardService;
 import com.sparta.trellor.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +14,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.RejectedExecutionException;
 
 @RequestMapping("/api/{boardId}/{columnId}/cards")
 @RestController
@@ -22,18 +23,16 @@ public class CardController {
     private final CardService cardService;
 
     @PostMapping
-    public ResponseEntity<?> createCards(
+    public ResponseEntity<CardMessageResponseDto> createCards(
             @PathVariable Long boardId,
             @PathVariable Long columnId,
             @RequestBody CardRequestDto cardRequestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
-        try {
-            CardResponseDto cardResponseDto = cardService.createCards(boardId, columnId, cardRequestDto, userDetails);
-            return ResponseEntity.ok().body(cardResponseDto);
-        } catch (RejectedExecutionException | IllegalArgumentException exception) {
-            return ResponseEntity.badRequest().body(new CommonResponseDto(exception.getMessage(), HttpStatus.BAD_REQUEST.value()));
-        }
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        CardMessageResponseDto cardResponseDto =
+                cardService.createCards(boardId, columnId, cardRequestDto, userDetails);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(cardResponseDto);
     }
 
     @GetMapping("/all")
@@ -58,35 +57,29 @@ public class CardController {
     }
 
     @PutMapping("/{cardId}")
-    public ResponseEntity<?> updateCard(
+    public ResponseEntity<CardMessageResponseDto> updateCard(
             @PathVariable Long boardId,
             @PathVariable Long columnId,
             @PathVariable Long cardId,
             @RequestBody CardRequestDto cardRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        try {
-            CardResponseDto cardResponseDto = cardService.updateCard(boardId, columnId, cardId, cardRequestDto, userDetails);
-            return ResponseEntity.ok().body(cardResponseDto);
-        } catch (RejectedExecutionException | IllegalArgumentException exception) {
-            return ResponseEntity.badRequest().body(new CommonResponseDto(exception.getMessage(), HttpStatus.BAD_REQUEST.value()));
-        }
+        CardMessageResponseDto responseDto =
+            cardService.updateCard(boardId, columnId, cardId, cardRequestDto, userDetails);
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
 
     }
 
     @DeleteMapping("/{cardId}")
-    public ResponseEntity<CommonResponseDto> deleteCard(
+    public ResponseEntity<CardMessageDeleteDto> deleteCard(
             @PathVariable Long boardId,
             @PathVariable Long columnId,
             @PathVariable Long cardId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        try {
-            cardService.deleteCard(cardId, userDetails);
-            return ResponseEntity.ok().body(new CommonResponseDto("정상적으로 삭제 되었습니다.", HttpStatus.OK.value()));
-        } catch (RejectedExecutionException | IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(new CommonResponseDto(ex.getMessage(), HttpStatus.BAD_REQUEST.value()));
-        }
+        CardMessageDeleteDto responseDto =
+                cardService.deleteCard(cardId, userDetails);
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     @PutMapping("/{cardId}/move")
@@ -98,18 +91,14 @@ public class CardController {
             @RequestParam(required = false) Integer newPosition,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        try {
             if (newColumnId != null && newPosition != null) {
-                CardResponseDto cardResponseDto = cardService.moveCardToAnotherColumn(boardId, columnId, newColumnId, cardId, userDetails);
+                CardMessageResponseDto cardResponseDto = cardService.moveCardToAnotherColumn(boardId, columnId, newColumnId, cardId, userDetails);
                 return ResponseEntity.ok().body(cardResponseDto);
             } else if (newPosition != null) {
-                CardResponseDto cardResponseDto = cardService.changeCardPositionInSameColumn(boardId, columnId, cardId, newPosition, userDetails);
+                CardMessageResponseDto cardResponseDto = cardService.changeCardPositionInSameColumn(boardId, columnId, cardId, newPosition, userDetails);
                 return ResponseEntity.ok().body(cardResponseDto);
             } else {
                 return ResponseEntity.badRequest().body(new CommonResponseDto("카드를 올바르게 이동할 수 없습니다.", HttpStatus.BAD_REQUEST.value()));
             }
-        } catch (IllegalArgumentException exception) {
-            return ResponseEntity.badRequest().body(new CommonResponseDto(exception.getMessage(), HttpStatus.BAD_REQUEST.value()));
-        }
     }
 }
