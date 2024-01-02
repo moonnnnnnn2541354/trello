@@ -7,7 +7,10 @@ import com.sparta.trellor.domain.utils.BaseTime;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
 import java.util.ArrayList;
+
+import java.util.Collection;
 import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,7 +53,24 @@ public class BoardColumn extends BaseTime {
         this.columnName = columnName;
     }
 
+    public List<Card> getCards() {
+        return cards;
+    }
+
     public void addCard(Card card) {
-        this.cards.add(card);
+        cards.add(card);
+        card.setBoardColumn(this);
+    }
+
+    public void removeCard(Card card) {
+        cards.remove(card);
+        card.setBoardColumn(null);
+    }
+
+    public void moveCardPosition(Card card, int newPosition) {
+        if (cards.contains(card)) {
+            cards.remove(card);
+            cards.add(newPosition, card);
+        }
     }
 }
