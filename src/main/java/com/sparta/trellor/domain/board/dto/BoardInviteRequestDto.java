@@ -11,6 +11,5 @@ import java.util.List;
 @NoArgsConstructor
 public class BoardInviteRequestDto {
     private Long boardId;
-    private List<Long> invitedUserIds;
-
+    private String userName;
 }

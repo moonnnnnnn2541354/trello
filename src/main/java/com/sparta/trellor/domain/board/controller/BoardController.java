@@ -35,9 +35,11 @@ public class BoardController {
         System.out.println("createBoard called with: " + requestDto);
         return boardService.createBoard(requestDto);
     }
+
     @PostMapping("/invite")
-    public BoardInviteResponseDto boardInvite(@RequestBody BoardInviteRequestDto requestDto) {
-        return boardService.boardInvite(requestDto);
+    public ResponseEntity<BoardInviteResponseDto> boardInvite(@RequestBody BoardInviteRequestDto requestDto) {
+        BoardInviteResponseDto responseDto = boardService.boardInvite(requestDto);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
     @PutMapping("/{boardId}")

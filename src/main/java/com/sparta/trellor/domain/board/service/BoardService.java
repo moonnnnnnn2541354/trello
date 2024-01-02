@@ -70,12 +70,14 @@ public class BoardService {
 
     }
     public BoardInviteResponseDto boardInvite(BoardInviteRequestDto requestDto) {
-        Long boardId = requestDto.getBoardId();
-        List<Long> invitedUserIds = requestDto.getInvitedUserIds();
-
+        User inviteUser = userRepository.findByUsername(requestDto.getUserName()).orElseThrow(
+                ()-> new UsernameNotFoundException("초대할 회원을 찾을 수 없습니다.")
+        );
+        Board inviteBoard = boardRepository.findById(requestDto.getBoardId()).orElseThrow(
+                ()-> new UsernameNotFoundException("초대할 보드를 찾을 수 없습니다."));
         // 초대 로직 구현
         // boardId에 해당하는 보드에 invitedUserIds에 해당하는 사용자들을 초대하는 비즈니스 로직을 수행
-
+        userBoardRepository.save(new UserBoard(inviteUser.getId(), inviteBoard.getBoardId()));
         // 성공 메시지를 담은 응답 객체를 생성하여 반환
         return new BoardInviteResponseDto("초대가 성공적으로 완료되었습니다.");
     }
