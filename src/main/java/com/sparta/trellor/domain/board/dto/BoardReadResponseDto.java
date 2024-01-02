@@ -7,29 +7,22 @@ import com.sparta.trellor.domain.column.entity.BoardColumn;
 import lombok.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoardReadAllResponseDto{
+public class BoardReadResponseDto {
     private String boardName;
     private String boardColor;
     private String boardInfo;
-    private List<UserBoard> userBoard;
-    private List<BoardColumn> boardColumns;
     private Long boardId;
 
-    public BoardReadAllResponseDto(Board board){
-        this.boardId = board.getBoardId();
+    public BoardReadResponseDto(Board board){
         this.boardName = board.getBoardName();
         this.boardColor = board.getBoardColor();
         this.boardInfo = board.getBoardInfo();
-        this.userBoard = board.getUserBoards();
-        this.boardColumns = board.getBoardColumns().stream()
-                .map(BoardFindColumnReponseDto::new)
-                .collect(Collectors.toList());
+        this.boardId = board.getBoardId();
     }
 }
