@@ -1,9 +1,10 @@
 package com.sparta.trellor.domain.card.dto;
 
 import com.sparta.trellor.domain.card.entity.Card;
+import com.sparta.trellor.domain.comment.dto.response.CommentResponseDto;
+import com.sparta.trellor.domain.comment.entity.Comment;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class CardResponseDto {
     private String cardInfo;
     private String cardColor;
     private String username;
-    private LocalDateTime createdAt;
+    private List<CommentResponseDto> commentList;
 
     public CardResponseDto(Card card) {
         this.id = card.getId();
@@ -22,20 +23,18 @@ public class CardResponseDto {
         this.cardInfo = card.getCardInfo();
         this.cardColor = card.getCardColor();
         this.username = card.getUser().getUsername();
-        this.createdAt = card.getCreatedAt();
     }
 
-//    public CardResponseDto(Card card, List<Comment> commentList) {
-//        this.id = card.getId();
-//        this.cardTitle = card.getCardTitle();
-//        this.cardInfo = card.getCardInfo();
-//        this.cardColor = card.getCardColor();
-//        this.commentList = new ArrayList<>();
-//        for (Comment comment : commentList) {
-//            this.commentList.add(new CommentResponse(comment));
-//        }
-//        this.username = card.getUser().getUsername();
-//        this.createdAt = card.getCreatedAt();
-//    }
+    public CardResponseDto(Card card, List<Comment> commentList) {
+        this.id = card.getId();
+        this.cardTitle = card.getCardTitle();
+        this.cardInfo = card.getCardInfo();
+        this.cardColor = card.getCardColor();
+        this.commentList = new ArrayList<>();
+        for (Comment comment : commentList) {
+            this.commentList.add(new CommentResponseDto(comment));
+        }
+        this.username = card.getUser().getUsername();
+    }
 
 }

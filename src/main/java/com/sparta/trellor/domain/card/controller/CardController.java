@@ -3,7 +3,6 @@ package com.sparta.trellor.domain.card.controller;
 import com.sparta.trellor.domain.card.dto.CardRequestDto;
 import com.sparta.trellor.domain.card.dto.CardResponseDto;
 import com.sparta.trellor.domain.card.dto.CommonResponseDto;
-import com.sparta.trellor.domain.card.entity.Card;
 import com.sparta.trellor.domain.card.service.CardService;
 import com.sparta.trellor.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
 @RequestMapping("/api/{boardId}/{columnId}/cards")
@@ -27,7 +27,7 @@ public class CardController {
             @PathVariable Long columnId,
             @RequestBody CardRequestDto cardRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
-            ) {
+    ) {
         try {
             CardResponseDto cardResponseDto = cardService.createCards(boardId, columnId, cardRequestDto, userDetails);
             return ResponseEntity.ok().body(cardResponseDto);
@@ -36,16 +36,37 @@ public class CardController {
         }
     }
 
+    @GetMapping("/all")
+    public List<CardResponseDto> grtAllCard(
+            @PathVariable Long boardId,
+            @PathVariable Long columnId) {
+        return cardService.garAllCards();
+    }
+
+    @GetMapping("/{cardId}")
+    public ResponseEntity<?> getCard(
+            @PathVariable Long boardId,
+            @PathVariable Long columnId,
+            @PathVariable Long cardId
+    ) {
+        try {
+            CardResponseDto cardResponseDto = cardService.getCardDto(boardId, columnId, cardId);
+            return ResponseEntity.ok().body(cardResponseDto);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
+        }
+    }
+
     @PutMapping("/{cardId}")
     public ResponseEntity<?> updateCard(
-            @PathVariable String boardId,
+            @PathVariable Long boardId,
             @PathVariable Long columnId,
             @PathVariable Long cardId,
             @RequestBody CardRequestDto cardRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         try {
-            CardResponseDto cardResponseDto = cardService.updateCard(Long.valueOf(boardId), columnId, cardId, cardRequestDto, userDetails);
+            CardResponseDto cardResponseDto = cardService.updateCard(boardId, columnId, cardId, cardRequestDto, userDetails);
             return ResponseEntity.ok().body(cardResponseDto);
         } catch (RejectedExecutionException | IllegalArgumentException exception) {
             return ResponseEntity.badRequest().body(new CommonResponseDto(exception.getMessage(), HttpStatus.BAD_REQUEST.value()));
@@ -55,7 +76,7 @@ public class CardController {
 
     @DeleteMapping("/{cardId}")
     public ResponseEntity<CommonResponseDto> deleteCard(
-            @PathVariable String boardId,
+            @PathVariable Long boardId,
             @PathVariable Long columnId,
             @PathVariable Long cardId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
