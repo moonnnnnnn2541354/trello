@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface BoardColumnRepository extends JpaRepository<BoardColumn, Long> {
 
     Optional<BoardColumn> findByColumnName(String name);
-    Optional<BoardColumn> findByColumnId(Long columnId);
+
 }
