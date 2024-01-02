@@ -7,6 +7,7 @@ import com.sparta.trellor.domain.column.dto.BoardColumnUpdateRequestDto;
 import com.sparta.trellor.domain.column.dto.MessageDto;
 import com.sparta.trellor.domain.column.dto.MessageUpdateDto;
 import com.sparta.trellor.domain.column.service.BoardColumnService;
+import com.sparta.trellor.domain.utils.BaseTime;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/column")
 @RequiredArgsConstructor
-public class BoardColumnController {
+public class BoardColumnController extends BaseTime {
     private final BoardColumnService columnService;
 
     @PostMapping
@@ -32,7 +33,6 @@ public class BoardColumnController {
     public MessageUpdateDto updateBoardColumn(@RequestBody BoardColumnUpdateRequestDto requestDto){
         return columnService.updateBoardColumn(requestDto);
     }
-
 
     @PutMapping("/{boardId}")
     public BoardColumnMoveResponseDto moveBoardColumn(@PathVariable Long boardId, @RequestBody BoardColumnMoveRequestDto requestDto){

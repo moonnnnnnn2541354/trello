@@ -30,13 +30,13 @@ public class BoardColumnService {
         Board board = boardRepository.findById(requestDto.getBoardId()).orElseThrow(() ->
             new IllegalArgumentException("해당 Board ID가 존재하지 않습니다."));
 
-        BoardColumn boardColumn = new BoardColumn(requestDto);
+        BoardColumn boardColumn = new BoardColumn(requestDto,board);
 
         board.addUserBoardList(boardColumn);
 
-        boardColumnRepository.save(boardColumn);
+//        findBoardColumn(boardColumn);
 
-        findBoardColumn(boardColumn);
+        boardColumnRepository.save(boardColumn);
 
         return new MessageDto("컬럼이 추가되었습니다");
     }

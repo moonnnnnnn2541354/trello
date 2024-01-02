@@ -4,6 +4,8 @@ import com.sparta.trellor.domain.card.entity.Card;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class CardResponseDto {
@@ -22,5 +24,18 @@ public class CardResponseDto {
         this.username = card.getUser().getUsername();
         this.createdAt = card.getCreatedAt();
     }
+
+//    public CardResponseDto(Card card, List<Comment> commentList) {
+//        this.id = card.getId();
+//        this.cardTitle = card.getCardTitle();
+//        this.cardInfo = card.getCardInfo();
+//        this.cardColor = card.getCardColor();
+//        this.commentList = new ArrayList<>();
+//        for (Comment comment : commentList) {
+//            this.commentList.add(new CommentResponse(comment));
+//        }
+//        this.username = card.getUser().getUsername();
+//        this.createdAt = card.getCreatedAt();
+//    }
 
 }
