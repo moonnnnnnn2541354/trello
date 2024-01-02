@@ -4,5 +4,8 @@ import com.sparta.trellor.global.exception.error.ErrorCode;
 import com.sparta.trellor.global.exception.error.RestApiException;
 
 public class UserExistsException extends RestApiException {
-    public UserExistsException(ErrorCode errorCode) { super(errorCode); }
+
+    public UserExistsException(ErrorCode errorCode) {
+        super(errorCode);
+    }
 }
