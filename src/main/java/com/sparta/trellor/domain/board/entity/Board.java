@@ -40,22 +40,13 @@ public class Board extends BaseTime {
     @JsonIgnore
     private User user;
 
-
-    /**
-     * Board : userBoard = 1 : n
-     */
-    @OneToMany(orphanRemoval = true,fetch = FetchType.LAZY )
+    @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     @JsonBackReference
     private List<UserBoard> userBoards = new ArrayList<>();
 
-    /**
-     * Board : BoardColumn = 1 : n
-     */
-
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     List<BoardColumn> boardColumns = new ArrayList<>();
-
 
     public Board(BoardCreateRequestDto requestDto, User user) {
         this.boardName = requestDto.getBoardName();
@@ -68,11 +59,10 @@ public class Board extends BaseTime {
         this.userBoards.add(userBoard);
     }
 
-
     public void addUserBoardList(BoardColumn boardColumn) {
         this.boardColumns.add(boardColumn);
-    }      
-  
+    }
+
     public void update(BoardCreateRequestDto requestDto) {
         this.boardName = requestDto.getBoardName();
         this.boardColor = requestDto.getBoardColor();

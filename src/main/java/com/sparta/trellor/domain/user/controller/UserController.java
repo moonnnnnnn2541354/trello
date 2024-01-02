@@ -24,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
 public class UserController {
+
     private final UserService userService;
     private final int CREATED = HttpStatus.CREATED.value();
     private final int CONFLICT = HttpStatus.CONFLICT.value();
@@ -32,13 +33,13 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
-            @Valid @RequestBody SignupRequestDto requestDto,
-            BindingResult bindingResult
+        @Valid @RequestBody SignupRequestDto requestDto,
+        BindingResult bindingResult
     ) {
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
         List<String> errorMessages = new ArrayList<>();
-        if(fieldErrors.size() > 0) {
-            for(FieldError fieldError : fieldErrors) {
+        if (fieldErrors.size() > 0) {
+            for (FieldError fieldError : fieldErrors) {
                 errorMessages.add(fieldError.getDefaultMessage());
             }
             return ResponseEntity.status(403).body(errorMessages);
@@ -46,54 +47,61 @@ public class UserController {
 
         UserMessageResponseDto responseDto = userService.signup(requestDto);
 
-        if(responseDto.getStatus() == CREATED)
+        if (responseDto.getStatus() == CREATED) {
             return ResponseEntity.status(CREATED).body(responseDto);
-        else
+        } else {
             return ResponseEntity.status(CONFLICT).body(responseDto);
+        }
     }
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteAccount(
-            @PathVariable Long userId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+        @PathVariable Long userId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        UserMessageResponseDto responseDto = userService.deleteAccount(userId, userDetails.getUser());
-        if (responseDto.getStatus() == OK)
+        UserMessageResponseDto responseDto = userService.deleteAccount(userId,
+            userDetails.getUser());
+        if (responseDto.getStatus() == OK) {
             return ResponseEntity.status(OK).body(responseDto);
-        else
+        } else {
             return ResponseEntity.status(FORBIDDEN).body(responseDto);
+        }
     }
 
     @PutMapping("/{userId}/password")
     public ResponseEntity<?> updatePassword(
-            @PathVariable Long userId,
-            @Valid @RequestBody PasswordUpdateRequestDto requestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+        @PathVariable Long userId,
+        @Valid @RequestBody PasswordUpdateRequestDto requestDto,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        UserMessageResponseDto responseDto = userService.updatePassword(userId, requestDto, userDetails.getUser());
-        if(responseDto.getStatus() == OK)
+        UserMessageResponseDto responseDto = userService.updatePassword(userId, requestDto,
+            userDetails.getUser());
+        if (responseDto.getStatus() == OK) {
             return ResponseEntity.status(OK).body(responseDto);
-        else
+        } else {
             return ResponseEntity.status(FORBIDDEN).body(responseDto);
+        }
     }
 
     @PutMapping("/{userId}/email")
     public ResponseEntity<?> updateEmail(
-            @PathVariable Long userId,
-            @Valid @RequestBody EmailUpdateRequestDto requestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+        @PathVariable Long userId,
+        @Valid @RequestBody EmailUpdateRequestDto requestDto,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        UserMessageResponseDto responseDto = userService.updateEmail(userId, requestDto, userDetails.getUser());
-        if(responseDto.getStatus() == OK)
+        UserMessageResponseDto responseDto = userService.updateEmail(userId, requestDto,
+            userDetails.getUser());
+        if (responseDto.getStatus() == OK) {
             return ResponseEntity.status(OK).body(responseDto);
-        else
+        } else {
             return ResponseEntity.status(FORBIDDEN).body(responseDto);
+        }
     }
 
     @GetMapping("/logout")
     public ResponseEntity<?> logout(
-            HttpServletRequest request,
-            HttpServletResponse response
+        HttpServletRequest request,
+        HttpServletResponse response
     ) {
         UserMessageResponseDto responseDto = userService.logout(request, response);
         return ResponseEntity.status(OK).body(responseDto);

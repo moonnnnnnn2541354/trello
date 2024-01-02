@@ -13,5 +13,6 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 public class BoardColumnMoveResponseDto {
+
     private List<Long> columnsNos;
 }

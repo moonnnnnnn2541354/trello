@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class UserMessageResponseDto {
+
     private String msg;
     private int status;
     private UserResponseDto data;

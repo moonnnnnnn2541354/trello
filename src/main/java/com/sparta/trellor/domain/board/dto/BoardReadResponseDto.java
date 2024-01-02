@@ -2,11 +2,11 @@ package com.sparta.trellor.domain.board.dto;
 
 
 import com.sparta.trellor.domain.board.entity.Board;
-import com.sparta.trellor.domain.board.entity.UserBoard;
-import com.sparta.trellor.domain.column.entity.BoardColumn;
-import lombok.*;
-
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -14,12 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoardReadResponseDto {
+
     private String boardName;
     private String boardColor;
     private String boardInfo;
     private Long boardId;
 
-    public BoardReadResponseDto(Board board){
+    public BoardReadResponseDto(Board board) {
         this.boardName = board.getBoardName();
         this.boardColor = board.getBoardColor();
         this.boardInfo = board.getBoardInfo();

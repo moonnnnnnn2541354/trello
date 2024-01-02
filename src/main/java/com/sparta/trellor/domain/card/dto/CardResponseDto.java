@@ -10,6 +10,7 @@ import java.util.List;
 
 @Getter
 public class CardResponseDto {
+
     private Long id;
     private String cardTitle;
     private String cardInfo;

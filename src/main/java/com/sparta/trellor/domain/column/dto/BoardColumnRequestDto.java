@@ -1,6 +1,5 @@
 package com.sparta.trellor.domain.column.dto;
 
-import java.awt.LinearGradientPaint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

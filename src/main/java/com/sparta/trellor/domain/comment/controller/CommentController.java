@@ -56,7 +56,8 @@ public class CommentController {
         @PathVariable(name = "cardId") Long cardId,
         @PathVariable(name = "commentId") Long commentId) {
 
-        MessageDeleteDto responseDto = commentService.delete(userdetails.getUser(), cardId, commentId);
+        MessageDeleteDto responseDto = commentService.delete(userdetails.getUser(), cardId,
+            commentId);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }

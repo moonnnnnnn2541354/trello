@@ -16,6 +16,7 @@ import java.util.List;
 @Getter
 @Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,6 +41,7 @@ public class User {
         this.password = password;
         this.role = role;
     }
+
     public void passwordUpdate(String encodingNewPassword) {
         this.password = encodingNewPassword;
     }
@@ -48,29 +50,21 @@ public class User {
         this.email = email;
     }
 
-
-     // User : Board = 1 : n
-
-    @OneToMany(orphanRemoval = true,fetch = FetchType.LAZY )
+    @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private List<Board> boards = new ArrayList<>();
 
-
-    // User : userBoard = 1 : n
-
-    @OneToMany(orphanRemoval = true,fetch = FetchType.LAZY  )
+    @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private List<UserBoard> userBoards = new ArrayList<>();
 
-
-
-    public void addBoardList(Board board){
+    public void addBoardList(Board board) {
         this.boards.add(board);
-
     }
-    public void addUserBoardList(UserBoard userBoard){
+
+    public void addUserBoardList(UserBoard userBoard) {
         this.userBoards.add(userBoard);
     }
 }

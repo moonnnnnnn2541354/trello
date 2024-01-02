@@ -21,14 +21,15 @@ import java.io.IOException;
 @Slf4j(topic = "jwt 검증 및 인가")
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
+
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain
     ) throws ServletException, IOException {
         String tokenValue = jwtUtil.getTokenFromRequest(request);
         String url = request.getRequestURI();
@@ -57,18 +58,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    /**
-     * 토큰 검증 메서드를 호출하는 메서드
-     */
     private void doValidateToken(String tokenValue) {
         if (!jwtUtil.validateToken(tokenValue)) {
             log.error("Token Error");
         }
     }
 
-    /**
-     * 인증처리하는 메서드
-     */
     public void setAuthentication(String username) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         Authentication authentication = createAuthentication(username);
@@ -77,11 +72,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         SecurityContextHolder.setContext(context);
     }
 
-    /**
-     * 인증 객체 생성
-     */
     private Authentication createAuthentication(String username) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, null,
+            userDetails.getAuthorities());
     }
 }

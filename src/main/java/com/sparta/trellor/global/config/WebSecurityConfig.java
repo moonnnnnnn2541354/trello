@@ -22,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
@@ -31,19 +32,13 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * AuthenticationManager를 Bean으로 등록하고 반환하는 메서드
-     */
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration configuration
+        AuthenticationConfiguration configuration
     ) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
-    /**
-     * 인증 필터 등록
-     */
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
         JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
@@ -51,32 +46,26 @@ public class WebSecurityConfig {
         return filter;
     }
 
-    /**
-     * 인가 필터 등록
-     */
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
         return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
     }
 
-    /**
-     * HTTP 요청에 대한 보안 설정하는 메서드
-     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf((csrf) -> csrf.disable());
 
         http.sessionManagement((sessionManagement) ->
-                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
 
         http.authorizeHttpRequests((authorizationRequest) ->
-                authorizationRequest
-                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/api/users/signup").permitAll()
-                        .requestMatchers("/api/users/login").permitAll()
-                        .anyRequest().authenticated()
+            authorizationRequest
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                .requestMatchers("/").permitAll()
+                .requestMatchers("/api/users/signup").permitAll()
+                .requestMatchers("/api/users/login").permitAll()
+                .anyRequest().authenticated()
         );
 
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);

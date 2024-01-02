@@ -13,12 +13,17 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MessageDto {
+
     private String msg;
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         MessageDto that = (MessageDto) o;
         return Objects.equals(msg, that.msg);
     }

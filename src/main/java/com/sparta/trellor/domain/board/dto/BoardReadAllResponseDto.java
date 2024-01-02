@@ -14,7 +14,8 @@ import java.util.stream.Collectors;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoardReadAllResponseDto{
+public class BoardReadAllResponseDto {
+
     private String boardName;
     private String boardColor;
     private String boardInfo;
@@ -22,14 +23,14 @@ public class BoardReadAllResponseDto{
     private List<BoardColumn> boardColumns;
     private Long boardId;
 
-    public BoardReadAllResponseDto(Board board){
+    public BoardReadAllResponseDto(Board board) {
         this.boardId = board.getBoardId();
         this.boardName = board.getBoardName();
         this.boardColor = board.getBoardColor();
         this.boardInfo = board.getBoardInfo();
         this.userBoard = board.getUserBoards();
         this.boardColumns = board.getBoardColumns().stream()
-                .map(BoardFindColumnReponseDto::new)
-                .collect(Collectors.toList());
+            .map(BoardFindColumnResponseDto::new)
+            .collect(Collectors.toList());
     }
 }

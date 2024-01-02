@@ -62,8 +62,6 @@ public class CommentService {
             ("댓글을 삭제 하였습니다", HttpStatus.OK.value());
     }
 
-
-    ////////////////////////////////////////////////////////////
     private Card checkCard(Long cardId) {
         return cardRepository.findById(cardId).orElseThrow(
             () -> new CommentExistsException(CommentErrorCode.NOT_EXISTS_CARD));
@@ -79,6 +77,5 @@ public class CommentService {
             throw new CommentExistsException(CommentErrorCode.UNAUTHORIZED_USER);
         }
     }
-    ////////////////////////////////////////////////////////////
 
 }
