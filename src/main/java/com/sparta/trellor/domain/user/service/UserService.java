@@ -5,6 +5,7 @@ import com.sparta.trellor.domain.user.dto.request.PasswordUpdateRequestDto;
 import com.sparta.trellor.domain.user.dto.request.SignupRequestDto;
 import com.sparta.trellor.domain.user.entity.User;
 import com.sparta.trellor.domain.user.entity.UserRoleEnum;
+import com.sparta.trellor.domain.user.exception.UserExistsException;
 import com.sparta.trellor.domain.user.repository.UserRepository;
 import com.sparta.trellor.global.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import static com.sparta.trellor.domain.comment.exception.CommentErrorCode.UNAUTHORIZED_USER;
+import static com.sparta.trellor.domain.user.exception.UserErrorCode.NOT_EXISTS_USER;
 
 /**
  * 회원가입 관련 메서드
@@ -87,23 +91,6 @@ public class UserService {
     }
 
     /**
-     * 존재하는 사용자인지 확인하는 메서드
-     */
-    private User checkToExistUser(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-    }
-
-    /**
-     * 접근 권한을 가지고 있는진 확인하는 메서드
-     */
-    private void checkAccessAuthority(User findUser, User user) {
-        if (!findUser.getUsername().equals(user.getUsername())) {
-            throw new IllegalArgumentException("해당 계정에 대한 권한을 가지고 있지 않습니다.");
-        }
-    }
-
-    /**
      * 비밀번호 일치 여부 확인하는 메서드
      */
     private boolean checkPasswordMatch(String rawPassword, String encodedPassword) {
@@ -112,4 +99,24 @@ public class UserService {
         }
         return true;
     }
+
+    ////////////////////////////////////////////////////////////
+
+    /**
+     * 존재하는 사용자인지 확인하는 메서드
+     */
+    private User checkToExistUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserExistsException(NOT_EXISTS_USER));
+    }
+
+    /**
+     * 접근 권한을 가지고 있는진 확인하는 메서드
+     */
+    private void checkAccessAuthority(User findUser, User user) {
+        if (!findUser.getUsername().equals(user.getUsername())) {
+            throw new UserExistsException(UNAUTHORIZED_USER);
+        }
+    }
+    ////////////////////////////////////////////////////////////
 }
