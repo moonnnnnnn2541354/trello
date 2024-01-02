@@ -1,9 +1,11 @@
 package com.sparta.trellor.domain.card.dto;
 
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class CardRequestDto {
 
     private Long id;
