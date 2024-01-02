@@ -4,6 +4,8 @@ import com.sparta.trellor.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import javax.sql.RowSet;
+
 @Entity
 @Getter
 @Setter

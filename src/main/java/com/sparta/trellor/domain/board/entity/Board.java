@@ -1,6 +1,7 @@
 package com.sparta.trellor.domain.board.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.trellor.domain.board.dto.BoardCreateRequestDto;
 import com.sparta.trellor.domain.column.entity.BoardColumn;
 import com.sparta.trellor.domain.user.entity.User;
@@ -32,6 +33,12 @@ public class Board {
 
     @Column(name = "board_info", nullable = false)
     private String boardInfo;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
+
 
     /**
      * Board : userBoard = 1 : n

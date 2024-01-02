@@ -3,9 +3,11 @@ package com.sparta.trellor.domain.board.controller;
 
 import com.sparta.trellor.domain.board.dto.*;
 import com.sparta.trellor.domain.board.service.BoardService;
+import com.sparta.trellor.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,13 +41,13 @@ public class BoardController {
     }
 
     @PutMapping("/{boardId}")
-    public BoardInviteResponseDto boardUpdate(@PathVariable Long boardId, @RequestBody BoardCreateRequestDto requestDto){
-        return boardService.boardUpdate(boardId,requestDto);
+    public BoardInviteResponseDto boardUpdate(@PathVariable Long boardId, @RequestBody BoardCreateRequestDto requestDto,@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return boardService.boardUpdate(boardId,requestDto,userDetails);
     }
 
     @DeleteMapping("/{boardId}")
-    public BoardInviteResponseDto deleteBoard(@PathVariable Long boardId){
-        return boardService.deleteBoard(boardId);
+    public BoardInviteResponseDto deleteBoard(@PathVariable Long boardId,@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return boardService.deleteBoard(boardId,userDetails);
     }
 
 }
