@@ -8,6 +8,8 @@ import com.sparta.trellor.domain.card.entity.Card;
 import com.sparta.trellor.domain.card.repository.CardRepository;
 import com.sparta.trellor.domain.column.entity.BoardColumn;
 import com.sparta.trellor.domain.column.repository.BoardColumnRepository;
+import com.sparta.trellor.domain.comment.entity.Comment;
+import com.sparta.trellor.domain.comment.repository.CommentRepository;
 import com.sparta.trellor.domain.user.entity.User;
 import com.sparta.trellor.global.security.UserDetailsImpl;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.stream.Collectors;
@@ -26,6 +29,7 @@ public class CardService {
     private final BoardRepository boardRepository;
     private final BoardColumnRepository boardColumnRepository;
     private final CardRepository cardRepository;
+    private final CommentRepository commentRepository;
 
     public CardResponseDto createCards(Long boardId, Long columnId, CardRequestDto cardRequestDto, UserDetailsImpl userDetails) {
 
@@ -48,6 +52,23 @@ public class CardService {
 
         //DB에 저장된 값 반환
         return new CardResponseDto(saveCard);
+    }
+
+    public List<CardResponseDto> garAllCards() {
+        List<Card> cardList = cardRepository.findAll();
+
+        List<CardResponseDto> responseDtoList = new ArrayList<>();
+
+        for (Card card : cardList) {
+            responseDtoList.add(new CardResponseDto(card));
+        }
+        return responseDtoList;
+    }
+
+    public CardResponseDto getCardDto(Long boardId, Long columnId, Long cardId) {
+        Card card = getCard(cardId);
+        List<Comment> commentList = commentRepository.findAllByCardId(cardId);
+        return new CardResponseDto(card, commentList);
     }
 
     @Transactional
