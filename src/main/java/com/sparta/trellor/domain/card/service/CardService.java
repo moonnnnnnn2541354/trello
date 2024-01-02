@@ -32,10 +32,12 @@ public class CardService {
     private final CardRepository cardRepository;
     private final CommentRepository commentRepository;
 
-    public CardMessageResponseDto createCards(Long boardId, Long columnId, CardRequestDto cardRequestDto, UserDetailsImpl userDetails) {
+    public CardMessageResponseDto createCards(Long boardId, Long columnId,
+        CardRequestDto cardRequestDto, UserDetailsImpl userDetails) {
 
         Board board = boardRepository.findById(boardId).orElseThrow(NullPointerException::new);
-        BoardColumn column = boardColumnRepository.findById(columnId).orElseThrow(NullPointerException::new);
+        BoardColumn column = boardColumnRepository.findById(columnId)
+            .orElseThrow(NullPointerException::new);
         Card card = new Card(cardRequestDto, userDetails, board, column);
 
         Card saveCard = cardRepository.save(card);
@@ -61,10 +63,12 @@ public class CardService {
     }
 
     @Transactional
-    public CardMessageResponseDto updateCard(Long boardId, Long columnId, Long cardId, CardRequestDto cardRequestDto, UserDetailsImpl userDetails) {
+    public CardMessageResponseDto updateCard(Long boardId, Long columnId, Long cardId,
+        CardRequestDto cardRequestDto, UserDetailsImpl userDetails) {
 
         Board board = boardRepository.findById(boardId).orElseThrow(NullPointerException::new);
-        BoardColumn column = boardColumnRepository.findById(columnId).orElseThrow(NullPointerException::new);
+        BoardColumn column = boardColumnRepository.findById(columnId)
+            .orElseThrow(NullPointerException::new);
         Card card = getUserCard(cardId, userDetails.getUser());
 
         card.setCardTitle(cardRequestDto.getCardTitle());
@@ -81,12 +85,14 @@ public class CardService {
         cardRepository.delete(card);
 
         return new CardMessageDeleteDto
-                ("카드를 삭제 하였습니다", HttpStatus.OK.value());
+            ("카드를 삭제 하였습니다", HttpStatus.OK.value());
     }
 
     @Transactional
-    public CardMessageResponseDto changeCardPositionInSameColumn(Long boardId, Long columnId, Long cardId, int newCardNo, UserDetailsImpl userDetails) {
-        BoardColumn column = boardColumnRepository.findById(columnId).orElseThrow(NullPointerException::new);
+    public CardMessageResponseDto changeCardPositionInSameColumn(Long boardId, Long columnId,
+        Long cardId, int newCardNo, UserDetailsImpl userDetails) {
+        BoardColumn column = boardColumnRepository.findById(columnId)
+            .orElseThrow(NullPointerException::new);
         Card card = getUserCard(cardId, userDetails.getUser());
 
         if (!column.getCards().contains(card)) {
@@ -103,9 +109,12 @@ public class CardService {
     }
 
     @Transactional
-    public CardMessageResponseDto moveCardToAnotherColumn(Long boardId, Long currentColumnId, Long newColumnId, Long cardId, UserDetailsImpl userDetails) {
-        BoardColumn currentColumn = boardColumnRepository.findById(currentColumnId).orElseThrow(NullPointerException::new);
-        BoardColumn newColumn = boardColumnRepository.findById(newColumnId).orElseThrow(NullPointerException::new);
+    public CardMessageResponseDto moveCardToAnotherColumn(Long boardId, Long currentColumnId,
+        Long newColumnId, Long cardId, UserDetailsImpl userDetails) {
+        BoardColumn currentColumn = boardColumnRepository.findById(currentColumnId)
+            .orElseThrow(NullPointerException::new);
+        BoardColumn newColumn = boardColumnRepository.findById(newColumnId)
+            .orElseThrow(NullPointerException::new);
         Card card = getUserCard(cardId, userDetails.getUser());
 
         if (!currentColumn.getCards().contains(card)) {
@@ -119,7 +128,7 @@ public class CardService {
 
     private Card getCard(Long cardId) {
         return cardRepository.findById(cardId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+            .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
     }
 
     public Card getUserCard(Long cardId, User user) {
