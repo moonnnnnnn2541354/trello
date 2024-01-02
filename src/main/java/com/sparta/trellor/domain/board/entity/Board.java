@@ -1,9 +1,11 @@
 package com.sparta.trellor.domain.board.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.trellor.domain.board.dto.BoardCreateRequestDto;
 import com.sparta.trellor.domain.column.entity.BoardColumn;
 import com.sparta.trellor.domain.user.entity.User;
+import com.sparta.trellor.domain.utils.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "board")
 @NoArgsConstructor
-public class Board {
+public class Board extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +35,12 @@ public class Board {
     @Column(name = "board_info", nullable = false)
     private String boardInfo;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
+
+
     /**
      * Board : userBoard = 1 : n
      */
@@ -45,10 +53,8 @@ public class Board {
      * Board : BoardColumn = 1 : n
      */
 
-    @OneToMany(orphanRemoval = true,fetch = FetchType.LAZY )
-    @JoinColumn(name = "board_id")
-    @JsonBackReference
-    private List<BoardColumn> boardColumns = new ArrayList<>();
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    List<BoardColumn> boardColumns = new ArrayList<>();
 
 
     public Board(BoardCreateRequestDto requestDto, User user) {

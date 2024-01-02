@@ -11,9 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
-@RequestMapping("/api/cards")
+@RequestMapping("/api/{boardId}/{columnId}/cards")
 @RestController
 @RequiredArgsConstructor
 public class CardController {
@@ -22,25 +23,50 @@ public class CardController {
 
     @PostMapping
     public ResponseEntity<?> createCards(
+            @PathVariable Long boardId,
+            @PathVariable Long columnId,
             @RequestBody CardRequestDto cardRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         try {
-            CardResponseDto cardResponseDto = cardService.createCards(cardRequestDto, userDetails);
+            CardResponseDto cardResponseDto = cardService.createCards(boardId, columnId, cardRequestDto, userDetails);
             return ResponseEntity.ok().body(cardResponseDto);
         } catch (RejectedExecutionException | IllegalArgumentException exception) {
             return ResponseEntity.badRequest().body(new CommonResponseDto(exception.getMessage(), HttpStatus.BAD_REQUEST.value()));
         }
     }
 
+    @GetMapping("/all")
+    public List<CardResponseDto> grtAllCard(
+            @PathVariable Long boardId,
+            @PathVariable Long columnId) {
+        return cardService.garAllCards();
+    }
+
+    @GetMapping("/{cardId}")
+    public ResponseEntity<?> getCard(
+            @PathVariable Long boardId,
+            @PathVariable Long columnId,
+            @PathVariable Long cardId
+    ) {
+        try {
+            CardResponseDto cardResponseDto = cardService.getCardDto(boardId, columnId, cardId);
+            return ResponseEntity.ok().body(cardResponseDto);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
+        }
+    }
+
     @PutMapping("/{cardId}")
     public ResponseEntity<?> updateCard(
+            @PathVariable Long boardId,
+            @PathVariable Long columnId,
             @PathVariable Long cardId,
             @RequestBody CardRequestDto cardRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         try {
-            CardResponseDto cardResponseDto = cardService.updateCard(cardId, cardRequestDto, userDetails);
+            CardResponseDto cardResponseDto = cardService.updateCard(boardId, columnId, cardId, cardRequestDto, userDetails);
             return ResponseEntity.ok().body(cardResponseDto);
         } catch (RejectedExecutionException | IllegalArgumentException exception) {
             return ResponseEntity.badRequest().body(new CommonResponseDto(exception.getMessage(), HttpStatus.BAD_REQUEST.value()));
@@ -50,6 +76,8 @@ public class CardController {
 
     @DeleteMapping("/{cardId}")
     public ResponseEntity<CommonResponseDto> deleteCard(
+            @PathVariable Long boardId,
+            @PathVariable Long columnId,
             @PathVariable Long cardId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
@@ -61,4 +89,30 @@ public class CardController {
         }
     }
 
+    @PutMapping("/{cardId}/move")
+    public ResponseEntity<?> moveCard(
+            @PathVariable Long boardId,
+            @PathVariable Long columnId,
+            @PathVariable Long cardId,
+            @RequestParam(required = false) Long newColumnId,
+            @RequestParam(required = false) Integer newPosition,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        try {
+            if (newColumnId != null && newPosition != null) {
+                // 카드를 다른 컬럼으로 이동하는 경우
+                CardResponseDto cardResponseDto = cardService.moveCardToAnotherColumn(boardId, columnId, newColumnId, cardId, userDetails);
+                return ResponseEntity.ok().body(cardResponseDto);
+            } else if (newPosition != null) {
+                // 같은 컬럼 내에서 카드 위치를 변경하는 경우
+                CardResponseDto cardResponseDto = cardService.changeCardPositionInSameColumn(boardId, columnId, cardId, newPosition, userDetails);
+                return ResponseEntity.ok().body(cardResponseDto);
+            } else {
+                // 필요한 매개변수가 제공되지 않는 경우
+                return ResponseEntity.badRequest().body(new CommonResponseDto("카드를 올바르게 이동할 수 없습니다.", HttpStatus.BAD_REQUEST.value()));
+            }
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.badRequest().body(new CommonResponseDto(exception.getMessage(), HttpStatus.BAD_REQUEST.value()));
+        }
+    }
 }

@@ -4,6 +4,8 @@ import com.sparta.trellor.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import javax.sql.RowSet;
+
 @Entity
 @Getter
 @Setter
@@ -22,9 +24,9 @@ public class UserBoard {
      * userBoard : board = n : 1
      */
 
-    @Column(name = "invite_user_id")
+    @Column(name = "user_id")
     private Long inviteUserId;
-    @Column(name = "invite_board_id")
+    @Column(name = "board_id")
     private Long inviteBoardId;
 
     public UserBoard(Long inviteUserId, Long inviteBoardId) {
