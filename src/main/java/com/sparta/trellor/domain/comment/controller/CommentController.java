@@ -1,7 +1,8 @@
 package com.sparta.trellor.domain.comment.controller;
 
+import com.sparta.trellor.domain.comment.dto.msg.MessageDeleteDto;
+import com.sparta.trellor.domain.comment.dto.msg.MessageResponseDto;
 import com.sparta.trellor.domain.comment.dto.request.CommentRequestDto;
-import com.sparta.trellor.domain.comment.dto.response.CommentResponseDto;
 import com.sparta.trellor.domain.comment.service.CommentService;
 import com.sparta.trellor.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
@@ -25,39 +26,39 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<CommentResponseDto> create(
+    public ResponseEntity<MessageResponseDto> create(
         @AuthenticationPrincipal UserDetailsImpl userdetails,
         @PathVariable(name = "cardId") Long cardId,
         @Valid @RequestBody CommentRequestDto requestDto) {
 
-        CommentResponseDto responseDto =
+        MessageResponseDto responseDto =
             commentService.create(userdetails.getUser(), cardId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<CommentResponseDto> update(
+    public ResponseEntity<MessageResponseDto> update(
         @AuthenticationPrincipal UserDetailsImpl userdetails,
         @PathVariable(name = "cardId") Long cardId,
         @PathVariable(name = "commentId") Long commentId,
         @Valid @RequestBody CommentRequestDto requestDto) {
 
-        CommentResponseDto responseDto =
+        MessageResponseDto responseDto =
             commentService.update(userdetails.getUser(), cardId, commentId, requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<String> delete(
+    public ResponseEntity<MessageDeleteDto> delete(
         @AuthenticationPrincipal UserDetailsImpl userdetails,
         @PathVariable(name = "cardId") Long cardId,
         @PathVariable(name = "commentId") Long commentId) {
 
-        commentService.delete(userdetails.getUser(), cardId, commentId);
+        MessageDeleteDto responseDto = commentService.delete(userdetails.getUser(), cardId, commentId);
 
-        return ResponseEntity.status(HttpStatus.OK).body("댓글이 삭제 되었습니다.");
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
 }
