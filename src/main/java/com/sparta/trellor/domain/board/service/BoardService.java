@@ -58,17 +58,18 @@ public class BoardService {
         return new BoardCreateResponseDto(board);
     }
 
-    public List<BoardReadAllResponseDto> readAllBoard() {
-        return boardRepository.findAll().stream().map(BoardReadAllResponseDto::new).toList();
+    public List<BoardReadResponseDto> readAllBoard() {
+        return boardRepository.findAll().stream().map(BoardReadResponseDto::new).toList();
     }
 
     public BoardReadAllResponseDto readChoiceBoard(Long boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(
                 () -> new UsernameNotFoundException("선택하신 Board는 존재하지 않습니다.")
         );
-        return new BoardReadAllResponseDto(board);
 
+        return new BoardReadAllResponseDto(board);
     }
+
     public BoardInviteResponseDto boardInvite(BoardInviteRequestDto requestDto) {
         User inviteUser = userRepository.findByUsername(requestDto.getUserName()).orElseThrow(
                 ()-> new UsernameNotFoundException("초대할 회원을 찾을 수 없습니다.")
