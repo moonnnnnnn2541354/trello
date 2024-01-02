@@ -29,7 +29,7 @@ public class BoardReadAllResponseDto{
         this.boardInfo = board.getBoardInfo();
         this.userBoard = board.getUserBoards();
         this.boardColumns = board.getBoardColumns().stream()
-                .map(BoardFindColumnReponseDto::new)
+                .map(BoardFindColumnResponseDto::new)
                 .collect(Collectors.toList());
     }
 }
