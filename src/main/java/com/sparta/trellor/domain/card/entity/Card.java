@@ -6,7 +6,15 @@ import com.sparta.trellor.domain.column.entity.BoardColumn;
 import com.sparta.trellor.domain.user.entity.User;
 import com.sparta.trellor.domain.utils.BaseTime;
 import com.sparta.trellor.global.security.UserDetailsImpl;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +22,7 @@ import lombok.NoArgsConstructor;
 @Entity(name = "Cards")
 @NoArgsConstructor
 public class Card extends BaseTime {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,12 +47,24 @@ public class Card extends BaseTime {
     @JoinColumn(name = "column_id", nullable = false)
     private BoardColumn boardColumn;
 
-
-    public Card(CardRequestDto cardRequestDto, UserDetailsImpl userDetails, Board board, BoardColumn column) {
+    public Card(CardRequestDto cardRequestDto, UserDetailsImpl userDetails, Board board,
+        BoardColumn column) {
         this.cardTitle = cardRequestDto.getCardTitle();
         this.cardInfo = cardRequestDto.getCardInfo();
         this.cardColor = cardRequestDto.getCardColor();
         this.user = userDetails.getUser();
+        this.board = board;
+        this.boardColumn = column;
+    }
+
+    @Builder
+    public Card(Long id, String title, String info, String color, User user, Board board,
+        BoardColumn column) {
+        this.id = id;
+        this.cardTitle = title;
+        this.cardInfo = info;
+        this.cardColor = color;
+        this.user = user;
         this.board = board;
         this.boardColumn = column;
     }
