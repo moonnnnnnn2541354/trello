@@ -65,8 +65,8 @@ public class CardController {
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         CardMessageResponseDto responseDto =
-            cardService.updateCard(boardId, columnId, cardId, cardRequestDto, userDetails);
-            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+                cardService.updateCard(boardId, columnId, cardId, cardRequestDto, userDetails);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
 
     }
 
@@ -79,7 +79,7 @@ public class CardController {
     ) {
         CardMessageDeleteDto responseDto =
                 cardService.deleteCard(cardId, userDetails);
-            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     @PutMapping("/{cardId}/move")
@@ -91,14 +91,14 @@ public class CardController {
             @RequestParam(required = false) Integer newPosition,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-            if (newColumnId != null && newPosition != null) {
-                CardMessageResponseDto cardResponseDto = cardService.moveCardToAnotherColumn(boardId, columnId, newColumnId, cardId, userDetails);
-                return ResponseEntity.ok().body(cardResponseDto);
-            } else if (newPosition != null) {
-                CardMessageResponseDto cardResponseDto = cardService.changeCardPositionInSameColumn(boardId, columnId, cardId, newPosition, userDetails);
-                return ResponseEntity.ok().body(cardResponseDto);
-            } else {
-                return ResponseEntity.badRequest().body(new CommonResponseDto("카드를 올바르게 이동할 수 없습니다.", HttpStatus.BAD_REQUEST.value()));
-            }
+        if (newColumnId != null && newPosition != null) {
+            CardMessageResponseDto cardResponseDto = cardService.moveCardToAnotherColumn(boardId, columnId, newColumnId, cardId, userDetails);
+            return ResponseEntity.ok().body(cardResponseDto);
+        } else if (newPosition != null) {
+            CardMessageResponseDto cardResponseDto = cardService.changeCardPositionInSameColumn(boardId, columnId, cardId, newPosition, userDetails);
+            return ResponseEntity.ok().body(cardResponseDto);
+        } else {
+            return ResponseEntity.badRequest().body(new CommonResponseDto("카드를 올바르게 이동할 수 없습니다.", HttpStatus.BAD_REQUEST.value()));
+        }
     }
 }
