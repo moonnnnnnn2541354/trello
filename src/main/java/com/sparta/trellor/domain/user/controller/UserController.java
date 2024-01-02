@@ -3,19 +3,20 @@ package com.sparta.trellor.domain.user.controller;
 import com.sparta.trellor.domain.user.dto.request.EmailUpdateRequestDto;
 import com.sparta.trellor.domain.user.dto.request.PasswordUpdateRequestDto;
 import com.sparta.trellor.domain.user.dto.request.SignupRequestDto;
+import com.sparta.trellor.domain.user.dto.response.UserMessageResponseDto;
 import com.sparta.trellor.domain.user.service.UserService;
 import com.sparta.trellor.global.security.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import javax.naming.Binding;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,10 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
+    private final int CREATED = HttpStatus.CREATED.value();
+    private final int CONFLICT = HttpStatus.CONFLICT.value();
+    private final int OK = HttpStatus.OK.value();
+    private final int FORBIDDEN = HttpStatus.FORBIDDEN.value();
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
@@ -39,10 +44,12 @@ public class UserController {
             return ResponseEntity.status(403).body(errorMessages);
         }
 
-        if(userService.signup(requestDto))
-            return ResponseEntity.status(201).body("회원가입 성공했습니다.");
+        UserMessageResponseDto responseDto = userService.signup(requestDto);
+
+        if(responseDto.getStatus() == CREATED)
+            return ResponseEntity.status(CREATED).body(responseDto);
         else
-            return ResponseEntity.status(409).body("이미 존재하는 사용자입니다.");
+            return ResponseEntity.status(CONFLICT).body(responseDto);
     }
 
     @DeleteMapping("/{userId}")
@@ -50,11 +57,11 @@ public class UserController {
             @PathVariable Long userId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        Long id = userService.deleteAccount(userId, userDetails.getUser());
-        if (id != null) {
-            return ResponseEntity.status(200).body("회원탈퇴 성공했습니다.");
-        }
-        return ResponseEntity.status(403).body("회원탈퇴 실패했습니다.");
+        UserMessageResponseDto responseDto = userService.deleteAccount(userId, userDetails.getUser());
+        if (responseDto.getStatus() == OK)
+            return ResponseEntity.status(OK).body(responseDto);
+        else
+            return ResponseEntity.status(FORBIDDEN).body(responseDto);
     }
 
     @PutMapping("/{userId}/password")
@@ -63,10 +70,11 @@ public class UserController {
             @Valid @RequestBody PasswordUpdateRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        if(userService.updatePassword(userId, requestDto, userDetails.getUser()))
-            return ResponseEntity.status(200).body("비밀번호가 수정되었습니다.");
+        UserMessageResponseDto responseDto = userService.updatePassword(userId, requestDto, userDetails.getUser());
+        if(responseDto.getStatus() == OK)
+            return ResponseEntity.status(OK).body(responseDto);
         else
-            return ResponseEntity.status(403).body("비밀번호가 일치하지 않습니다.");
+            return ResponseEntity.status(FORBIDDEN).body(responseDto);
     }
 
     @PutMapping("/{userId}/email")
@@ -75,10 +83,11 @@ public class UserController {
             @Valid @RequestBody EmailUpdateRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        if(userService.updateEmail(userId, requestDto, userDetails.getUser()))
-            return ResponseEntity.status(200).body("이메일이 수정되었습니다.");
+        UserMessageResponseDto responseDto = userService.updateEmail(userId, requestDto, userDetails.getUser());
+        if(responseDto.getStatus() == OK)
+            return ResponseEntity.status(OK).body(responseDto);
         else
-            return ResponseEntity.status(403).body("비밀번호가 일치하지 않습니다.");
+            return ResponseEntity.status(FORBIDDEN).body(responseDto);
     }
 
     @GetMapping("/logout")
@@ -86,7 +95,7 @@ public class UserController {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        userService.logout(request, response);
-        return ResponseEntity.status(200).body("로그아웃 되었습니다.");
+        UserMessageResponseDto responseDto = userService.logout(request, response);
+        return ResponseEntity.status(OK).body(responseDto);
     }
 }

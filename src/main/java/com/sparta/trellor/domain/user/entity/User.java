@@ -3,8 +3,8 @@ package com.sparta.trellor.domain.user.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sparta.trellor.domain.board.entity.Board;
 import com.sparta.trellor.domain.board.entity.UserBoard;
-import com.sparta.trellor.domain.user.dto.request.PasswordUpdateRequestDto;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,6 +33,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
+    @Builder
     public User(String username, String email, String password, UserRoleEnum role) {
         this.username = username;
         this.email = email;

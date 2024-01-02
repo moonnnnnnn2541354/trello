@@ -2,6 +2,7 @@ package com.sparta.trellor.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.trellor.domain.user.dto.request.LoginRequestDto;
+import com.sparta.trellor.domain.user.dto.response.UserMessageResponseDto;
 import com.sparta.trellor.domain.user.entity.UserRoleEnum;
 import com.sparta.trellor.global.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -9,6 +10,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
