@@ -8,5 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardInviteResponseDto {
+
     private String msg;
 }

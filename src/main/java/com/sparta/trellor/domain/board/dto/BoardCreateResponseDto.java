@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardCreateResponseDto {
+
     private String boardName;
     private String boardColor;
     private String boardInfo;

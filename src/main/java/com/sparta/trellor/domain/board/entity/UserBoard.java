@@ -1,10 +1,16 @@
 package com.sparta.trellor.domain.board.entity;
 
 import com.sparta.trellor.domain.user.entity.User;
-import jakarta.persistence.*;
-import lombok.*;
-
-import javax.sql.RowSet;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -18,11 +24,6 @@ public class UserBoard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_board_id")
     private Long userBoardId;
-
-    /**
-     * user : userBoard = 1 : n
-     * userBoard : board = n : 1
-     */
 
     @Column(name = "user_id")
     private Long inviteUserId;
