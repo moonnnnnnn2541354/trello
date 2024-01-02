@@ -12,7 +12,6 @@ import com.sparta.trellor.domain.comment.entity.Comment;
 import com.sparta.trellor.domain.comment.repository.CommentRepository;
 import com.sparta.trellor.domain.user.entity.User;
 import com.sparta.trellor.global.security.UserDetailsImpl;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

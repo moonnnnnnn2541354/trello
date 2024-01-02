@@ -81,9 +81,6 @@ public class BoardColumn extends BaseTime {
         this.columnName = columnName;
     }
 
-    public List<Card> getCards() {
-        return cards;
-    }
 
     public void addCard(Card card) {
         cards.add(card);

@@ -25,19 +25,17 @@ public class Card extends BaseTime {
     private String cardInfo;
     @Column(name = "card_color", nullable = false)
     private String cardColor;
-    @Column(name = "card_no", nullable = false)
-    private int cardNo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_Id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "board_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-    @ManyToOne
-    @JoinColumn(name = "column_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "column_id", nullable = false)
     private BoardColumn boardColumn;
 
 

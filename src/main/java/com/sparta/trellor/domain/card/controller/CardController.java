@@ -100,15 +100,12 @@ public class CardController {
     ) {
         try {
             if (newColumnId != null && newPosition != null) {
-                // 카드를 다른 컬럼으로 이동하는 경우
                 CardResponseDto cardResponseDto = cardService.moveCardToAnotherColumn(boardId, columnId, newColumnId, cardId, userDetails);
                 return ResponseEntity.ok().body(cardResponseDto);
             } else if (newPosition != null) {
-                // 같은 컬럼 내에서 카드 위치를 변경하는 경우
                 CardResponseDto cardResponseDto = cardService.changeCardPositionInSameColumn(boardId, columnId, cardId, newPosition, userDetails);
                 return ResponseEntity.ok().body(cardResponseDto);
             } else {
-                // 필요한 매개변수가 제공되지 않는 경우
                 return ResponseEntity.badRequest().body(new CommonResponseDto("카드를 올바르게 이동할 수 없습니다.", HttpStatus.BAD_REQUEST.value()));
             }
         } catch (IllegalArgumentException exception) {
