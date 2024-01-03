@@ -3,9 +3,11 @@ package com.sparta.trellor.domain.card.entity;
 import com.sparta.trellor.domain.board.entity.Board;
 import com.sparta.trellor.domain.card.dto.CardRequestDto;
 import com.sparta.trellor.domain.column.entity.BoardColumn;
+import com.sparta.trellor.domain.comment.entity.Comment;
 import com.sparta.trellor.domain.user.entity.User;
 import com.sparta.trellor.domain.utils.BaseTime;
 import com.sparta.trellor.global.security.UserDetailsImpl;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,6 +16,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,6 +51,10 @@ public class Card extends BaseTime {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "column_id", nullable = false)
     private BoardColumn boardColumn;
+
+    @OneToMany(mappedBy = "card",cascade = CascadeType.REMOVE)
+    private List<Comment> comments = new ArrayList<>();
+
 
     public Card(CardRequestDto cardRequestDto, UserDetailsImpl userDetails, Board board,
         BoardColumn column) {
